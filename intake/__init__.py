@@ -1,0 +1,1 @@
+"""Dealer quote intake prototype."""

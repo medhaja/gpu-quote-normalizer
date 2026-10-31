@@ -1,0 +1,9 @@
+[project]
+name = "gpu-quote-intake"
+version = "0.1.0"
+description = "Prototype: turn messy GPU server quotes into validated, comparable records"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

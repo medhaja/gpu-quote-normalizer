@@ -21,3 +21,6 @@ out/
 *.log
 .DS_Store
 Thumbs.db
+
+# Local demo database
+*.db
