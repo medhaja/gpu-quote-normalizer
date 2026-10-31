@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pill, field_value %}
+{% block title %}Review queue{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Review queue</h1>
+    <p class="lede">Every field that is not <code>ok</code>, with the reason. A fix needs a value and a note. It is stored as a new event and the original is kept.</p>
+  </div>
+</div>
+{% if not views %}<div class="empty">Nothing to review. Every quote is parsed or rejected.</div>{% endif %}
+
+{% for v in views %}
+<article class="review-card" id="{{ v.quote_id }}">
+  <header>
+    <div>
+      <strong>{{ v.quote_id }}</strong>
+      <span class="muted">· {{ v.fields.dealer.value or v.fields.dealer.raw or 'unknown dealer' }} · <a href="/files/{{ v.file_id }}#{{ v.quote_id }}">{{ v.filename }}</a> ({{ v.label }})</span>
+    </div>
+    <div>{{ pill(v.status.value) }} <a class="small" href="/quotes/{{ v.quote_id }}">audit log →</a></div>
+  </header>
+  <div class="summary-line">
+    {{ field_value('gpu_sku', v.fields.gpu_sku) }} · {{ v.fields.gpus_per_node.value or '?' }} GPUs/node ·
+    {{ v.fields.node_count.value or '?' }} nodes · {{ v.fields.condition.value or '?' }} ·
+    {{ field_value('unit_price_usd', v.fields.unit_price_usd) }} / node
+  </div>
+  {% if error and error_q == v.quote_id %}<div class="flash err">{{ error }}</div>{% endif %}
+  <table class="data review-table">
+    <thead><tr><th>Field</th><th>Raw value</th><th>Status</th><th>Reason</th><th>Resolve</th></tr></thead>
+    <tbody>
+    {% for name in v.flagged %}{% set f = v.fields[name] %}
+      <tr>
+        <td class="strong">{{ FIELD_LABELS[name] }}</td>
+        <td>{% if f.raw %}<code>{{ f.raw }}</code>{% else %}<span class="muted">—</span>{% endif %}
+            {% if f.source %}<div class="sub">{{ f.source }}{% if f.extractor %} · {{ f.extractor.value }}{% endif %}</div>{% endif %}</td>
+        <td>{{ pill(f.status.value) }}</td>
+        <td class="reason">{{ f.reason }}</td>
+        <td>
+          <form class="resolve" method="post" action="/review/{{ v.quote_id }}/{{ name }}">
+            <input name="value" aria-label="corrected value" placeholder="{{ 'e.g. H100 SXM5' if name == 'gpu_sku' else 'corrected value' }}"
+                   value="{{ f.value if (f.value is not none and name != 'condition') else '' }}" required>
+            <input name="reason" aria-label="reason" placeholder="reason (required)" required>
+            <button type="submit">Save</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <form class="reject" method="post" action="/review/{{ v.quote_id }}/reject">
+    <input name="reason" aria-label="rejection reason" placeholder="reason for rejecting the whole quote" required>
+    <button type="submit" class="secondary">Reject quote</button>
+  </form>
+</article>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pill, field_value %}
+{% block title %}{{ v.quote_id }} audit log{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/">Inbox</a> / <a href="/files/{{ v.file_id }}">{{ v.filename }}</a> / {{ v.quote_id }}</div>
+<div class="page-head">
+  <div>
+    <h1>{{ v.quote_id }} <span class="muted">· {{ v.label }}</span> {{ pill(v.status.value) }}</h1>
+    <p class="lede">{{ v.status_reason }}. The event log is append-only, and the quote's current state is replayed from these events.</p>
+  </div>
+</div>
+
+<div class="split split-audit">
+  <section class="pane">
+    <div class="pane-head">Current state</div>
+    <dl class="fields">
+    {% for name in QUOTE_FIELDS %}{% set f = v.fields[name] %}
+      <div class="field st-{{ f.status.value }}" title="{{ f.reason or '' }}">
+        <dt>{{ FIELD_LABELS[name] }}</dt>
+        <dd>{{ field_value(name, f) }}
+          {% if f.extractor and f.extractor.value != 'rule' %}<span class="tag tag-{{ f.extractor.value }}">{{ f.extractor.value }}</span>{% endif %}
+          <span class="src">{{ f.source or '' }}</span>
+          {% if f.status.value != 'ok' or f.extractor and f.extractor.value == 'reviewer' %}<span class="why">{{ f.reason }}</span>{% endif %}
+        </dd>
+      </div>
+    {% endfor %}
+    </dl>
+  </section>
+
+  <section class="pane">
+    <div class="pane-head">Event stream <span class="muted">· {{ events | length }} events</span></div>
+    <ol class="timeline">
+    {% for e in events %}{% set d = e.data %}
+      <li class="ev ev-{{ e.type }}">
+        <div class="ev-head"><code>#{{ e.id }}</code> <strong>{{ e.type | replace('_', ' ') }}</strong> <span class="muted">{{ e.created_at.strftime('%Y-%m-%d %H:%M:%S') }} UTC</span></div>
+        <div class="ev-body">
+        {% if e.type == 'file_received' %}
+          Stored {{ d.filename }} ({{ d.size }} bytes), sha256 <code>{{ d.sha256[:16] }}…</code>
+        {% elif e.type == 'file_duplicate' %}
+          {{ d.filename }} has the same hash as {{ d.duplicate_of }}. Nothing new was created.
+        {% elif e.type == 'file_parsed' %}
+          Parsed as {{ d.kind }}: {{ d.quotes }} quote(s){% if d.gap_extractor %}, gap extractor: {{ d.gap_extractor }}{% endif %}.
+          {% if d.unmapped_columns %}Unmapped columns: {% for c in d.unmapped_columns %}<code>{{ c }}</code> {% endfor %}{% endif %}
+          {% if d.notes %}<ul>{% for n in d.notes %}<li>{{ n }}</li>{% endfor %}</ul>{% endif %}
+        {% elif e.type == 'quote_extracted' %}
+          Raw values from {{ d.label }}:
+          <div class="chips">{% for k, c in d.raw.items() if c.text %}<span class="chip"><b>{{ k }}</b> “{{ c.text }}” <i>{{ c.source }}{% if c.extractor != 'rule' %} · {{ c.extractor }}{% endif %}</i></span>{% endfor %}</div>
+        {% elif e.type == 'quote_normalized' %}
+          Normalized against the catalog:
+          <div class="chips">{% for k, f in d.fields.items() %}<span class="chip st-{{ f.status }}"><b>{{ k }}</b> {{ f.status }}</span>{% endfor %}</div>
+        {% elif e.type == 'quote_validated' %}
+          Validated ({{ d.cause }}, as of {{ d.as_of }}) → {{ pill(d.status) }} <span class="muted">{{ d.status_reason }}</span>
+        {% elif e.type == 'field_reviewed' %}
+          <b>{{ FIELD_LABELS[d.field] }}</b>: <code>{{ d.before.raw or d.before.value or '—' }}</code> ({{ d.before.status }}) → <code>{{ d.after.value }}</code> by {{ d.reviewer }}
+          <div class="note">“{{ d.reason }}”</div>
+        {% elif e.type == 'quote_rejected' %}
+          Rejected by {{ d.reviewer }}: <span class="note">“{{ d.reason }}”</span>
+        {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+    </ol>
+  </section>
+</div>
+{% endblock %}

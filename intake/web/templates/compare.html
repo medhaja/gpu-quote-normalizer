@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pill %}
+{% block title %}{{ rfq.id }} comparison{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>RFQ comparison</h1>
+    <p class="lede">Quotes are compared only when the canonical SKU, GPUs per node and condition all match the RFQ and every field is <code>ok</code>. Related quotes that don't qualify are listed with the reason.</p>
+  </div>
+</div>
+<nav class="tabs">
+  {% for r in rfqs %}<a href="/compare/{{ r.id }}" class="{{ 'active' if r.id == rfq.id }}"><strong>{{ r.id }}</strong> {{ r.title }}</a>{% endfor %}
+</nav>
+
+<section class="rfq-box">
+  <div><span class="muted">Synthetic RFQ</span><h2>{{ rfq.id }} · {{ rfq.title }}</h2></div>
+  <dl class="rfq-spec">
+    <div><dt>SKU</dt><dd>{{ rfq.gpu_sku }}</dd></div>
+    <div><dt>GPUs / node</dt><dd>{{ rfq.gpus_per_node }}</dd></div>
+    <div><dt>Nodes</dt><dd>{{ rfq.node_count }}</dd></div>
+    <div><dt>Condition</dt><dd>{{ rfq.condition }}</dd></div>
+  </dl>
+</section>
+
+{% set sp = c.spread %}
+<section class="tiles">
+  <div class="tile t-ok"><div class="tile-n">{{ c.comparable | length }}</div><div class="tile-l">comparable quotes</div></div>
+  <div class="tile"><div class="tile-n">{{ c.excluded | length }}</div><div class="tile-l">excluded</div></div>
+  {% if sp %}
+  <div class="tile"><div class="tile-n">{{ sp[0] | money }}</div><div class="tile-l">best price / node</div></div>
+  <div class="tile wide"><div class="tile-n">{{ (sp[0] * rfq.node_count) | money }} – {{ (sp[1] * rfq.node_count) | money }}</div>
+    <div class="tile-l">for {{ rfq.node_count }} nodes · {{ '%.1f' | format((sp[1] - sp[0]) / sp[0] * 100) }}% spread</div></div>
+  {% endif %}
+</section>
+
+<h3>Comparable quotes</h3>
+{% if c.comparable %}
+<table class="data">
+  <thead><tr><th>#</th><th>Dealer</th><th>Quote</th><th class="num">Price / node</th><th class="num">Price / GPU</th><th class="num">vs best</th>
+    <th class="num">For {{ rfq.node_count }} nodes</th><th class="num">Nodes quoted</th><th class="num">Lead time</th><th>Location</th><th>Valid until</th></tr></thead>
+  <tbody>
+  {% for r in c.comparable %}{% set v = r.view %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td class="strong">{{ v.value('dealer') }}</td>
+      <td><a href="/quotes/{{ v.quote_id }}">{{ v.quote_id }}</a><div class="sub">{{ v.filename }}</div></td>
+      <td class="num strong">{{ r.unit | money }}</td>
+      <td class="num">{{ r.per_gpu | money }}</td>
+      <td class="num">{% if r.delta_pct > 0 %}+{{ '%.1f' | format(r.delta_pct) }}%{% else %}<span class="pill pill-ok">best</span>{% endif %}</td>
+      <td class="num">{{ (r.unit * rfq.node_count) | money }}</td>
+      <td class="num">{{ v.value('node_count') }}{% if v.value('node_count') != rfq.node_count %} <span class="pill pill-ambiguous" title="quote covers a different node count than the RFQ">partial</span>{% endif %}</td>
+      <td class="num">{{ v.value('lead_time_days') }} d</td>
+      <td>{{ v.value('location') }}</td>
+      <td>{{ v.value('valid_until') }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}<div class="empty">No comparable quotes yet.</div>{% endif %}
+
+<h3>Excluded <span class="muted">· same GPU family, but not like-for-like or not trusted yet</span></h3>
+<table class="data">
+  <thead><tr><th>Quote</th><th>Dealer</th><th>Status</th><th>Why it is excluded</th></tr></thead>
+  <tbody>
+  {% for v, reasons in c.excluded %}
+    <tr>
+      <td><a href="/quotes/{{ v.quote_id }}">{{ v.quote_id }}</a><div class="sub">{{ v.filename }}</div></td>
+      <td>{{ v.fields.dealer.value or '—' }}</td>
+      <td>{{ pill(v.status.value) }}</td>
+      <td><ul class="reasons">{% for r in reasons %}<li>{{ r }}</li>{% endfor %}</ul></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pill %}
+{% block title %}Inbox{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Inbox</h1>
+    <p class="lede">Dealer spreadsheets and quote emails, parsed into one strict schema. Anything unclear goes to review instead of being guessed.</p>
+  </div>
+  <form class="upload" action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".csv,.xlsx,.eml,.txt" required>
+    <button type="submit">Upload &amp; parse</button>
+  </form>
+</div>
+{% if msg %}<div class="flash">{{ msg }}</div>{% endif %}
+
+<section class="tiles">
+  <div class="tile"><div class="tile-n">{{ n_files }}</div><div class="tile-l">files</div></div>
+  <div class="tile"><div class="tile-n">{{ n_quotes }}</div><div class="tile-l">quotes</div></div>
+  <div class="tile t-ok"><div class="tile-n">{{ totals.parsed }}</div><div class="tile-l">parsed</div></div>
+  <div class="tile t-review"><div class="tile-n">{{ totals.needs_review }}</div><div class="tile-l">need review</div></div>
+  <div class="tile t-rejected"><div class="tile-n">{{ totals.rejected }}</div><div class="tile-l">rejected</div></div>
+  <div class="tile"><div class="tile-n">{{ n_dupes }}</div><div class="tile-l">duplicate files</div></div>
+</section>
+
+<table class="data">
+  <thead><tr><th>File</th><th>Type</th><th class="num">Parsed</th><th class="num">Needs review</th><th class="num">Rejected</th><th>SHA-256</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr class="{{ 'dup' if r.duplicate_of }}">
+      <td>
+        {% if r.duplicate_of %}<span class="muted">{{ r.filename }}</span> <span class="pill pill-dup">duplicate</span>
+          <div class="sub">same bytes as <a href="/files/{{ r.file_id }}">{{ r.duplicate_of }}</a>; no new quotes created</div>
+        {% else %}<a href="/files/{{ r.file_id }}" class="strong">{{ r.filename }}</a>
+          {% if r.error %}<div class="sub err">{{ r.error }}</div>{% endif %}
+        {% endif %}
+      </td>
+      <td><span class="kind kind-{{ r.kind }}">{{ r.filename.rsplit('.', 1)[-1] | upper }}</span></td>
+      <td class="num">{{ r.counts.parsed or '' }}</td>
+      <td class="num">{% if r.counts.needs_review %}<span class="count-review">{{ r.counts.needs_review }}</span>{% endif %}</td>
+      <td class="num">{% if r.counts.rejected %}<span class="count-rejected">{{ r.counts.rejected }}</span>{% endif %}</td>
+      <td><code class="hash">{{ r.sha256[:12] }}…</code></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

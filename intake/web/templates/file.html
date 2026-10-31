@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pill, field_value %}
+{% block title %}{{ raw.filename }}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/">Inbox</a> / {{ raw.filename }}</div>
+<div class="page-head">
+  <div>
+    <h1>{{ raw.filename }}</h1>
+    <p class="lede">Raw input on the left, structured fields on the right. Hover a field to see where it came from.</p>
+  </div>
+  <div class="legend">
+    {{ pill('ok') }} {{ pill('ambiguous') }} {{ pill('invalid') }} {{ pill('missing') }}
+  </div>
+</div>
+
+<div class="split">
+  <section class="pane raw-pane">
+    <div class="pane-head">Raw input <span class="muted">· {{ raw.size }} bytes · sha256 <code>{{ raw.sha256[:16] }}…</code></span></div>
+    <div class="raw-scroll">
+    {% if parsed.grid %}
+      <table class="grid">
+        <thead><tr><th></th>{% for c in parsed.grid[0] %}<th>{{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[loop.index0] }}</th>{% endfor %}</tr></thead>
+        <tbody>
+        {% for row in parsed.grid %}{% set r = loop.index %}
+          <tr><th>{{ r }}</th>{% for c in row %}<td id="src-{{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[loop.index0] }}{{ r }}">{{ c }}</td>{% endfor %}</tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% elif parsed.lines %}
+      <pre class="lines">{% for line in parsed.lines %}<span class="ln" id="src-L{{ loop.index }}"><i>{{ loop.index }}</i>{{ line }}
+</span>{% endfor %}</pre>
+    {% endif %}
+    </div>
+  </section>
+
+  <section class="pane">
+    <div class="pane-head">Extracted quotes <span class="muted">· {{ views | length }}</span></div>
+    {% if meta.error %}<div class="flash err">{{ meta.error }}</div>{% endif %}
+    {% for v in views %}
+      <article class="quote-card" id="{{ v.quote_id }}">
+        <header>
+          <div><strong>{{ v.quote_id }}</strong> <span class="muted">· {{ v.label }}</span></div>
+          <div>{{ pill(v.status.value) }} <a class="small" href="/quotes/{{ v.quote_id }}">audit log →</a></div>
+        </header>
+        {% if v.status.value != 'parsed' %}<div class="status-reason">{{ v.status_reason }}</div>{% endif %}
+        <dl class="fields">
+        {% for name in QUOTE_FIELDS %}{% set f = v.fields[name] %}
+          <div class="field st-{{ f.status.value }}" data-src="{{ f.source or '' }}"
+               title="Source: {{ f.source or 'none' }} · extractor: {{ f.extractor.value if f.extractor else '—' }}{% if f.raw %} · raw: “{{ f.raw }}”{% endif %}{% if f.reason %} · {{ f.reason }}{% endif %}">
+            <dt>{{ FIELD_LABELS[name] }}</dt>
+            <dd>{{ field_value(name, f) }}
+              {% if f.extractor and f.extractor.value != 'rule' %}<span class="tag tag-{{ f.extractor.value }}">{{ f.extractor.value }}</span>{% endif %}
+              {% if f.status.value != 'ok' %}<span class="why">{{ f.reason }}</span>{% endif %}
+            </dd>
+          </div>
+        {% endfor %}
+        </dl>
+        {% if v.status.value == 'needs_review' or (v.status.value == 'rejected' and not v.rejected_reason) %}
+          <div class="card-foot"><a href="/review#{{ v.quote_id }}">Resolve in review queue →</a></div>
+        {% endif %}
+      </article>
+    {% endfor %}
+
+    <details class="meta" {% if meta.unmapped_columns %}open{% endif %}>
+      <summary>Parser details</summary>
+      {% if meta.column_map %}
+        <h4>Column mapping</h4>
+        <ul class="kv">{% for h, f in meta.column_map.items() %}<li><code>{{ h }}</code> → {{ f }}</li>{% endfor %}</ul>
+      {% endif %}
+      <h4>Unmapped columns</h4>
+      {% if meta.unmapped_columns %}<p>{% for c in meta.unmapped_columns %}<code class="unmapped">{{ c }}</code> {% endfor %}<span class="muted">kept in the raw file, not used</span></p>
+      {% else %}<p class="muted">none</p>{% endif %}
+      {% if meta.notes %}<h4>Notes</h4><ul>{% for n in meta.notes %}<li>{{ n }}</li>{% endfor %}</ul>{% endif %}
+    </details>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.querySelectorAll('.field[data-src]').forEach(function (el) {
+    var src = el.dataset.src && document.getElementById('src-' + el.dataset.src);
+    if (!src) return;
+    el.addEventListener('mouseenter', function () {
+      src.classList.add('hl');
+      src.scrollIntoView({block: 'nearest', inline: 'nearest'});
+    });
+    el.addEventListener('mouseleave', function () { src.classList.remove('hl'); });
+  });
+</script>
+{% endblock %}

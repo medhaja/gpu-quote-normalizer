@@ -1,0 +1,9 @@
+{% macro pill(status) -%}
+<span class="pill pill-{{ status }}">{{ status | replace('_', ' ') }}</span>
+{%- endmacro %}
+
+{% macro field_value(name, f) -%}
+{%- if f.value is none -%}<span class="muted">{{ f.raw if f.raw else '—' }}</span>
+{%- elif name in ('unit_price_usd', 'total_price_usd') -%}{{ f.value | money }}
+{%- else -%}{{ f.value }}{%- endif -%}
+{%- endmacro %}
