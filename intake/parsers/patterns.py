@@ -9,7 +9,8 @@ from __future__ import annotations
 import re
 
 FAMILY = r"(?:h100|h200|a100|b200|l40s)"
-MONEY = r"(?:[$€]\s?\d[\d,]*(?:\.\d+)?k?|(?:usd|eur)\s?\d[\d,]*(?:\.\d+)?k?|\d[\d,]*(?:\.\d+)?\s?(?:usd|eur))"
+_NUM = r"(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?"  # never ends on a comma
+MONEY = rf"(?:[$€]\s?{_NUM}k?|(?:usd|eur)\s?{_NUM}k?|{_NUM}\s?(?:usd|eur))"
 DATE = (r"(?:[A-Za-z]{3,9}\.? \d{1,2}(?:st|nd|rd|th)?,? \d{4}|\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{4}"
         r"|\d{1,2} [A-Za-z]{3,9},? \d{4})")
 CITY = r"([A-Z][A-Za-z.]+(?: [A-Z][A-Za-z.]+)*,\s*[A-Z]{2})\b"
@@ -26,7 +27,7 @@ LINE_PATTERNS: dict[str, list[re.Pattern]] = {
     ],
     "node_count": [
         re.compile(r"\b(?:qty|quantity|node count)\s*[:=]?\s*(\d+)\b", I),
-        re.compile(r"(?<![\w,.$€-])(\d+)\s*(?:x\s+)?(?:(?:[a-z][\w-]*|\d+-gpu)\s+){0,4}?(?:nodes|servers|systems)\b", I),
+        re.compile(r"(?<![\w,.$€-])(\d+)\s*(?:x\s+)?(?:(?:[a-z][\w-]*|\d+-gpu|\d+gb?)\s+){0,6}?(?:nodes|servers|systems)\b", I),
     ],
     "unit_price_usd": [
         re.compile(rf"\b(?:unit price|price per node|per[- ]node price|price/node)\s*[:=]?\s*(?:is\s+)?({MONEY})", I),
@@ -48,7 +49,8 @@ LINE_PATTERNS: dict[str, list[re.Pattern]] = {
                    r"(?=\s*(?:units?\b|nodes?\b|servers?\b|systems?\b|condition\b|in box\b|,|\.|;|$))", I),
     ],
     "location": [
-        re.compile(rf"\b(?:ships from|shipping from|located in|location|warehouse in|in stock (?:in|at))\s*[:\-]?\s*{CITY}"),
+        # Keyword is case-insensitive; the city itself must be capitalised ("Dallas, TX").
+        re.compile(rf"\b(?i:ships? from|shipping from|located in|location|warehouse in|in stock (?:in|at))\s*[:\-]?\s*{CITY}"),
     ],
     "dealer": [
         re.compile(r"\b(?:dealer|vendor|supplier|quote from|quotation from)\s*[:\-–—]\s*(.+?)\s*$", I),
