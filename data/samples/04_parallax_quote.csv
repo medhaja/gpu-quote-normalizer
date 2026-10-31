@@ -1,0 +1,4 @@
+Vendor,GPU,GPUs/Node,Nodes,Condition,Location,Unit Price (USD),Total (USD),Lead Time (days),Valid Until
+Parallax Data Gear,NVIDIA H100 SXM5 80G,8,16,New,"Chicago, IL",217000,3472000,28,2026-10-19
+Parallax Data Gear,H100 PCIe 80GB,8,16,New,"Chicago, IL",159500,2552000,14,2026-11-21
+Parallax Data Gear,a100-80g,8,32,Refurbished,"Chicago, IL",87000,2784000,28,2026-12-28

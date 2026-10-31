@@ -1,0 +1,4 @@
+Vendor,GPU,GPUs/Node,Nodes,Condition,Location,Unit Price (USD),Total (USD),Lead Time (days),Valid Until
+Northwind Compute,h100-sxm,8,16,New,"Dallas, TX",236000,3776000,14,2027-01-14
+Northwind Compute,A100 SXM4 80GB,8,32,Refurbished,"Dallas, TX",87000,2784000,35,2026-12-19
+Northwind Compute,L40S,8,4,New,"Dallas, TX",72500,290000,42,2026-12-27

@@ -1,0 +1,5 @@
+Dealer: Meridian GPU Supply
+
+Model,GPU Count,Qty,Cond,Ships From,Price/Node,Extended Price,Lead Time,Expires,Currency,Warranty
+NVIDIA H100 SXM5 80G,8,16,new,"San Jose, CA","$205,000.00","$3,280,000.00",21 days,"Nov 23, 2026",USD,90 days
+A100 40GB SXM4,8,12,new,"San Jose, CA","$69,000.00","$828,000.00",35 days,"Dec 21, 2026",USD,90 days

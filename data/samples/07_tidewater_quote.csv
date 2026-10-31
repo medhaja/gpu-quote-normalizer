@@ -1,0 +1,4 @@
+Vendor,GPU,GPUs/Node,Nodes,Condition,Location,Unit Price (USD),Total (USD),Lead Time (days),Valid Until
+Tidewater Systems,h100-sxm,4,16,New,"Seattle, WA",106500,1704000,42,2026-11-28
+Tidewater Systems,NVIDIA H200,8,8,New,"Seattle, WA",304500,2436000,28,2026-10-01
+Tidewater Systems,A100 80GB SXM4,8,32,Used,"Seattle, WA",71000,2272000,14,2026-12-25

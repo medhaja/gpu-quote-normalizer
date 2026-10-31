@@ -1,0 +1,11 @@
+From: Quarry Compute <rfq@quarry-compute.example>
+To: rfq-desk@buyer.example
+Subject: quick quote
+Date: Fri, 30 Oct 2026 15:40:00 -0400
+
+hey - quick one before the weekend.
+16 x 8-GPU H100 nodes, new, $201,500 per node, total $3,224,000.
+lead time 3-4 weeks. ships from Columbus, OH. valid until Jan 28, 2027.
+
+- Chris
+Quarry Compute

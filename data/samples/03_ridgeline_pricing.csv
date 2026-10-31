@@ -1,0 +1,4 @@
+Card,Config,Quantity,State,Warehouse,Unit $,Total $,ETA,Quote Valid Until,Supplier,Notes
+H100,8x,16,new,"Ashburn, VA","$207,500","$3,320,000",4 weeks,11/21/2026,Ridgeline Hardware,price firm
+NVIDIA B200 HGX,8 GPUs,4,new,"Ashburn, VA","$437,500","$1,750,000",5 weeks,01/24/2027,Ridgeline Hardware,
+a100-40g,8 GPUs,10,used,"Ashburn, VA","$53,000","$530,000",5 weeks,01/27/2027,Ridgeline Hardware,price firm

@@ -1,0 +1,3 @@
+* text=auto
+# Sample files are hashed and line-referenced; keep their bytes exact.
+data/samples/** binary

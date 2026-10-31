@@ -1,0 +1,29 @@
+{
+ "as_of": "2026-11-02",
+ "rfqs": [
+  {
+   "id": "RFQ-1001",
+   "title": "16\u00d7 8-GPU H100 SXM5 nodes, new",
+   "gpu_sku": "H100-SXM5-80GB",
+   "gpus_per_node": 8,
+   "node_count": 16,
+   "condition": "new"
+  },
+  {
+   "id": "RFQ-1002",
+   "title": "8\u00d7 8-GPU H200 nodes, new",
+   "gpu_sku": "H200-SXM-141GB",
+   "gpus_per_node": 8,
+   "node_count": 8,
+   "condition": "new"
+  },
+  {
+   "id": "RFQ-1003",
+   "title": "32\u00d7 8-GPU A100 80GB nodes, refurbished",
+   "gpu_sku": "A100-SXM4-80GB",
+   "gpus_per_node": 8,
+   "node_count": 32,
+   "condition": "refurbished"
+  }
+ ]
+}

@@ -1,0 +1,4 @@
+Card,Config,Quantity,State,Warehouse,Unit $,Total $,ETA,Quote Valid Until,Supplier,Notes
+H100 SXM,8x,16,refurbished,"Columbus, OH","$180,000","$2,880,000",3-4 weeks,12/24/2026,Quarry Compute,
+A100 80GB SXM4,8x,32,refurbished,"Columbus, OH","$88,000","$2,816,000",6 weeks,03/01/2027,Quarry Compute,NICs not included
+B200,8x,2,new,"Columbus, OH","$476,000","$952,000",6 weeks,11/21/2026,Quarry Compute,incl. rails

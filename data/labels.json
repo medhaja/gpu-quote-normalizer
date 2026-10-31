@@ -1,0 +1,2646 @@
+{
+ "01_northwind_quote.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Dallas, TX",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 236000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3776000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 14,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Northwind Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-14",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Dallas, TX",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 87000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2784000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Northwind Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-19",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "L40S-PCIE-48GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 4,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Dallas, TX",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 72500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 290000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Northwind Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-27",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "02_helix_rfq_response.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 234500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3752000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Helix Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-15",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 286000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2288000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Helix Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-15",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 238000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Helix Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-22",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "03_ridgeline_pricing.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": null,
+     "status": "ambiguous"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 207500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3320000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Ridgeline Hardware",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-21",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "B200-SXM-192GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 4,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 437500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 1750000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Ridgeline Hardware",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-24",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-40GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 10,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "used",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 53000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 530000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Ridgeline Hardware",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-27",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "04_parallax_quote.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Chicago, IL",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 217000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3472000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Parallax Data Gear",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": null,
+     "status": "invalid"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H100-PCIE-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Chicago, IL",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 159500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2552000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 14,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Parallax Data Gear",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-21",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Chicago, IL",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 87000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2784000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Parallax Data Gear",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-28",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "05_vantage_quote.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "unknown",
+     "status": "missing"
+    },
+    "location": {
+     "value": "Atlanta, GA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 204000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3264000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 14,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Vantage Node Co",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-17",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Atlanta, GA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 296000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2368000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Vantage Node Co",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-18",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "L40S-PCIE-48GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 4,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 6,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Atlanta, GA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 36500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 219000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Vantage Node Co",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-26",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "06_quarry_offer.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Columbus, OH",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 180000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2880000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": null,
+     "status": "ambiguous"
+    },
+    "dealer": {
+     "value": "Quarry Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-24",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Columbus, OH",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 88000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2816000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Quarry Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": null,
+     "status": "ambiguous"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "B200-SXM-192GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 2,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Columbus, OH",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 476000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 952000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Quarry Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-21",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "07_tidewater_quote.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 4,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Seattle, WA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 106500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 1704000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Tidewater Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-28",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Seattle, WA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 304500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2436000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Tidewater Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": null,
+     "status": "invalid"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "used",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Seattle, WA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 71000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2272000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 14,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Tidewater Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-25",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "08_meridian_quote.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 205000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3280000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Meridian GPU Supply",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-23",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-40GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 12,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 69000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 828000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Meridian GPU Supply",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-21",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "09_oakline_pricing.csv": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Reno, NV",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 221500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3544000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Oakline Technologies",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-26",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H100-PCIE-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Reno, NV",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 172000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 1376000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Oakline Technologies",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-25",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "L40S-PCIE-48GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Reno, NV",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 75500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 604000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Oakline Technologies",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-17",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "10_northwind_quote_resend.csv": {
+  "duplicate_of": "01_northwind_quote.csv",
+  "quotes": []
+ },
+ "11_bluefin_quotation.xlsx": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 231500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3704000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Bluefin Servers",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-25",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 312500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2500000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 14,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Bluefin Servers",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-19",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "B200-SXM-192GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 4,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 464000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 1856000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Bluefin Servers",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-14",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "12_cobalt_quotation.xlsx": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": null,
+     "status": "ambiguous"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Phoenix, AZ",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 84500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2704000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Cobalt Racks",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-13",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Phoenix, AZ",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 89000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2848000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Cobalt Racks",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-25",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Phoenix, AZ",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 171000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2736000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Cobalt Racks",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-19",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "13_helix_quotation.xlsx": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 236500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3784000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Helix Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-24",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 215000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3440000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 14,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Helix Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": null,
+     "status": "invalid"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "L40S-PCIE-48GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 4,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 10,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 40000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 400000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Helix Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-16",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "14_northwind_quotation.xlsx": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "unknown",
+     "status": "missing"
+    },
+    "location": {
+     "value": "Dallas, TX",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 314500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2516000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Northwind Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-17",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Dallas, TX",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 76500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2448000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 14,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Northwind Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-15",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H100-PCIE-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Dallas, TX",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 173500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2776000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Northwind Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-17",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "15_ridgeline_quotation.xlsx": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 219500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3512000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Ridgeline Hardware",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-19",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 112500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Ridgeline Hardware",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-17",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "B200-SXM-192GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 440500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3524000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Ridgeline Hardware",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-19",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "16_sablewood_angebot.xlsx": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Frankfurt, DE",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "total_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Sablewood IT",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-26",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Frankfurt, DE",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "total_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Sablewood IT",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-23",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Frankfurt, DE",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "total_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Sablewood IT",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-23",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "17_parallax_quotation.xlsx": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Chicago, IL",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 286500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2292000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Parallax Data Gear",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-20",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "L40S-PCIE-48GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Chicago, IL",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 73500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 1176000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Parallax Data Gear",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-24",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-40GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 20,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Chicago, IL",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 52000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 1040000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Parallax Data Gear",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-16",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "18_vantage_quotation.xlsx": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Atlanta, GA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 225500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3608000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Vantage Node Co",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-18",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Atlanta, GA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 83500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2672000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Vantage Node Co",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-18",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "used",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Atlanta, GA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 240000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 1920000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Vantage Node Co",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-20",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "21_bluefin_reply.eml": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Ashburn, VA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 224000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3584000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Bluefin Servers",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-23",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "22_cobalt_two_options.eml": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Phoenix, AZ",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 317500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2540000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Cobalt Racks",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-15",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "A100-SXM4-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 32,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "refurbished",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Phoenix, AZ",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 88500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2832000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Cobalt Racks",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-15",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "23_meridian_inline_table.txt": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 292000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2336000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 42,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Meridian GPU Supply",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-12-27",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "B200-SXM-192GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 4,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 446000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 1784000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 14,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Meridian GPU Supply",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-26",
+     "status": "ok"
+    }
+   },
+   {
+    "gpu_sku": {
+     "value": "L40S-PCIE-48GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "San Jose, CA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 78000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 624000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Meridian GPU Supply",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-26",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "24_fwd_tidewater.eml": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H100-SXM5-80GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Seattle, WA",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 230000.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3680000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 35,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Tidewater Systems",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-24",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "25_oakline_h200.eml": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Reno, NV",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 318500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 2548000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": 28,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Oakline Technologies",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-17",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "26_sablewood_eur.eml": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": "H200-SXM-141GB",
+     "status": "ok"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 8,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Frankfurt, DE",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "total_price_usd": {
+     "value": null,
+     "status": "invalid"
+    },
+    "lead_time_days": {
+     "value": 21,
+     "status": "ok"
+    },
+    "dealer": {
+     "value": "Sablewood IT",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2026-11-27",
+     "status": "ok"
+    }
+   }
+  ]
+ },
+ "27_quarry_quick_quote.txt": {
+  "duplicate_of": null,
+  "quotes": [
+   {
+    "gpu_sku": {
+     "value": null,
+     "status": "ambiguous"
+    },
+    "gpus_per_node": {
+     "value": 8,
+     "status": "ok"
+    },
+    "node_count": {
+     "value": 16,
+     "status": "ok"
+    },
+    "condition": {
+     "value": "new",
+     "status": "ok"
+    },
+    "location": {
+     "value": "Columbus, OH",
+     "status": "ok"
+    },
+    "unit_price_usd": {
+     "value": 201500.0,
+     "status": "ok"
+    },
+    "total_price_usd": {
+     "value": 3224000.0,
+     "status": "ok"
+    },
+    "lead_time_days": {
+     "value": null,
+     "status": "ambiguous"
+    },
+    "dealer": {
+     "value": "Quarry Compute",
+     "status": "ok"
+    },
+    "valid_until": {
+     "value": "2027-01-28",
+     "status": "ok"
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,4 @@
+Card,Config,Quantity,State,Warehouse,Unit $,Total $,ETA,Quote Valid Until,Supplier,Notes
+NVIDIA H100 SXM5 80G,8 GPUs,16,new,"Reno, NV","$221,500","$3,544,000",5 weeks,11/26/2026,Oakline Technologies,NICs not included
+h100-pcie,8 GPUs,8,new,"Reno, NV","$172,000","$1,376,000",3 weeks,11/25/2026,Oakline Technologies,incl. rails
+L40S 48GB,8 GPUs,8,new,"Reno, NV","$75,500","$604,000",4 weeks,01/17/2027,Oakline Technologies,NICs not included

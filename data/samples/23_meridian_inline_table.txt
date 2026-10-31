@@ -1,0 +1,20 @@
+From: Meridian GPU Supply <desk@meridian-gpu.example>
+To: rfq-desk@buyer.example
+Subject: Pricing as discussed
+Date: Wed, 28 Oct 2026 11:30:00 -0700
+
+Hi,
+
+Pricing as discussed on the call:
+
+| GPU | GPUs/node | Nodes | Condition | Unit price (USD) | Total (USD) | Lead time | Valid until |
+|-----|-----------|-------|-----------|------------------|-------------|-----------|-------------|
+| H200 SXM 141GB | 8 | 8 | new | 292,000 | 2,336,000 | 42 days | 2026-12-27 |
+| NVIDIA B200 HGX | 8 | 4 | new | 446,000 | 1,784,000 | 14 days | 2027-01-26 |
+| L40S 48GB | 8 | 8 | new | 78,000 | 624,000 | 35 days | 2027-01-26 |
+
+All units ship from San Jose, CA.
+
+Thanks,
+Ari Sato
+Meridian GPU Supply
