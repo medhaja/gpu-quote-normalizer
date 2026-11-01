@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>gpu-quote-normalizer · KT video</title>
+<style>
+  :root {
+    --bg: #0e1117; --panel: #161b24; --panel2: #1c2230; --line: #2a3242;
+    --text: #e8ebf2; --muted: #8b94a7; --dim: #5d6679;
+    --blue: #5aa9ff;    /* incoming data */
+    --amber: #f3b54a;   /* needs a human */
+    --red: #ff6b6b;     /* invalid / rejected */
+    --green: #45c486;   /* ok / comparable */
+    --violet: #a78bfa;  /* stored state */
+    --display: "Bahnschrift", "Segoe UI Semibold", "Segoe UI", sans-serif;
+    --body: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: "Cascadia Mono", "Consolas", "Courier New", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #05070a; color: var(--text); font-family: var(--body); }
+  body.render { overflow: hidden; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background:
+           radial-gradient(1400px 800px at 70% 20%, #141a25 0%, var(--bg) 60%); transform-origin: 0 0; }
+  .scene { position: absolute; inset: 0; opacity: 0; display: none; }
+  .abs { position: absolute; }
+  .chapter { position: absolute; left: 120px; top: 52px; font: 600 22px var(--mono); color: var(--muted);
+             letter-spacing: .04em; }
+  .chapter b { color: var(--blue); font-weight: 600; }
+  .headline { position: absolute; left: 120px; top: 100px; font: 600 56px var(--display); letter-spacing: -.01em; }
+  .mono { font-family: var(--mono); }
+  .muted { color: var(--muted); }
+  .box { position: absolute; border: 2px solid var(--line); border-radius: 14px; background: var(--panel);
+         display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .box .t { font: 600 28px var(--mono); }
+  .box .s { font: 400 19px var(--body); color: var(--muted); margin-top: 6px; }
+  .b-blue { border-color: var(--blue); } .b-violet { border-color: var(--violet); }
+  .b-amber { border-color: var(--amber); } .b-green { border-color: var(--green); } .b-red { border-color: var(--red); }
+  .c-blue { color: var(--blue); } .c-violet { color: var(--violet); } .c-amber { color: var(--amber); }
+  .c-green { color: var(--green); } .c-red { color: var(--red); }
+  .dashed { border-style: dashed; }
+  .chip { position: absolute; padding: 6px 16px; border-radius: 999px; font: 500 20px var(--mono);
+          border: 2px solid var(--line); background: var(--panel); white-space: nowrap; }
+  .pill { display: inline-block; padding: 2px 12px; border-radius: 999px; font: 600 17px var(--mono); }
+  .card { position: absolute; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+  svg.layer { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: visible; }
+  svg line { stroke-linecap: round; }
+  /* code panel */
+  .code { position: absolute; background: #0b0e14; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .code .hdr { height: 46px; display: flex; align-items: center; padding: 0 20px; font: 500 19px var(--mono);
+               color: var(--muted); border-bottom: 1px solid var(--line); background: #10141c; }
+  .code .hdr b { color: var(--text); font-weight: 500; }
+  .code .row { position: relative; display: flex; white-space: pre; font-family: var(--mono); }
+  .code .row .hl { position: absolute; inset: 0; background: rgba(90,169,255,.16); border-left: 4px solid var(--blue); opacity: 0; }
+  .code .row .ln { position: relative; width: 70px; text-align: right; padding-right: 18px; color: var(--dim); }
+  .code .row .tx { position: relative; color: #d7dce6; }
+  .kw { color: #c792ea; } .st { color: #9ece6a; } .fn { color: #7dcfff; } .cm { color: var(--dim); }
+  /* grid (scene 3) */
+  .cell { position: absolute; height: 44px; border: 1px solid var(--line); display: flex; align-items: center;
+          padding: 0 10px; font: 18px var(--mono); white-space: nowrap; overflow: hidden; }
+  /* preview controls */
+  #controls { display: none; gap: 12px; align-items: center; padding: 10px 16px; font: 14px var(--body); color: var(--muted); }
+  body.preview #controls { display: flex; }
+  #controls input[type=range] { flex: 1; }
+  #controls button { font: 600 14px var(--body); padding: 6px 14px; border-radius: 6px; border: 1px solid #333; background: #1a1f29; color: #eee; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="chapter" id="chapter"></div>
+  <div class="abs" id="progress" style="left:0;bottom:0;height:4px;background:#2b3546;width:0"></div>
+</div>
+<div id="controls">
+  <button id="play">Play</button>
+  <input id="scrub" type="range" min="0" max="1000" step="1" value="0">
+  <span id="clock" class="mono">0.00</span>
+</div>
+
+<script src="timing.js"></script>
+<script>
+"use strict";
+// ---------------------------------------------------------------- helpers (pure functions of t)
+const T = window.TIMING;
+const stage = document.getElementById("stage");
+const $ = (id) => document.getElementById(id);
+const clamp01 = (x) => Math.max(0, Math.min(1, x));
+const ease = (x) => { x = clamp01(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const prog = (t, t0, d = 0.6) => ease((t - t0) / d);
+const win = (t, a, b, d = 0.5) => Math.min(prog(t, a, d), 1 - prog(t, b, 0.4));
+const lerp = (a, b, p) => a + (b - a) * p;
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+window.__missingAnchors = [];
+
+function show(id, p, dx = 0, dy = 24) {
+  const e = $(id); if (!e) return;
+  e.style.opacity = p;
+  e.style.transform = `translate(${dx * (1 - p)}px, ${dy * (1 - p)}px)`;
+  e.style.visibility = p <= 0.001 ? "hidden" : "visible";
+}
+// An arrow is an SVG line plus an explicit triangle head (id + "-hd").
+function arrow(id, color, width = 3, dash = "") {
+  return `<line id="${id}" stroke="${color}" stroke-width="${width}" ${dash ? `stroke-dasharray="${dash}"` : ""}/>` +
+         `<path id="${id}-hd" d="M0,0 L-16,-8 L-16,8 z" fill="${color}"/>`;
+}
+function drawLine(id, x1, y1, x2, y2, p) {
+  const e = $(id);
+  const ang = Math.atan2(y2 - y1, x2 - x1), len = Math.hypot(x2 - x1, y2 - y1);
+  const ex = lerp(x1, x2, p), ey = lerp(y1, y2, p);
+  // stop the shaft where the head begins
+  const back = Math.min(12, len * p);
+  e.setAttribute("x1", x1); e.setAttribute("y1", y1);
+  e.setAttribute("x2", ex - Math.cos(ang) * back); e.setAttribute("y2", ey - Math.sin(ang) * back);
+  e.style.opacity = p > 0.02 ? 1 : 0;
+  const hd = $(`${id}-hd`);
+  if (hd) {
+    hd.setAttribute("transform", `translate(${ex},${ey}) rotate(${(ang * 180) / Math.PI})`);
+    hd.style.opacity = p > 0.15 ? 1 : 0;
+  }
+}
+const norm = (s) => s.toLowerCase().replace(/[^a-z0-9'\-]/g, "");
+function anchors(scene) {
+  const toks = scene.words.map((w) => ({ k: norm(w.w), s: w.s })).filter((x) => x.k);
+  const cache = {};
+  return (phrase, off = 0) => {
+    if (!(phrase in cache)) {
+      const p = phrase.split(/\s+/).map(norm).filter(Boolean);
+      cache[phrase] = null;
+      for (let i = 0; i + p.length <= toks.length && cache[phrase] === null; i++) {
+        if (p.every((k, j) => toks[i + j].k === k)) cache[phrase] = toks[i].s;
+      }
+      if (cache[phrase] === null) { window.__missingAnchors.push(`${scene.id}: ${phrase}`); cache[phrase] = 0; }
+    }
+    return cache[phrase] + off;
+  };
+}
+
+// Minimal Python highlighter for code-focus panels.
+function pyHtml(src) {
+  const re = /(f?"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(def|if|for|in|return|raise|else|not|and|or|None|True|False)\b|\b([a-z_]+)(?=\()|(#.*$)/g;
+  let out = "", last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    const cls = m[1] ? "st" : m[2] ? "kw" : m[3] ? "fn" : "cm";
+    out += `<span class="${cls}">${esc(m[0])}</span>`;
+    last = m.index + m[0].length;
+  }
+  return out + esc(src.slice(last));
+}
+// lines: [[lineNo|"", text], ...]; common indentation is removed for display.
+function codePanel(id, { x, y, w, path, range, lines, size = 20, lh = 32 }) {
+  const ind = Math.min(...lines.filter(([, s]) => s.trim() && s.trim() !== "…").map(([, s]) => s.match(/^ */)[0].length));
+  const rows = lines.map(([n, s], i) => {
+    const txt = s.trim() === "…" ? `<span class="cm">${" ".repeat(Math.max(0, s.indexOf("…") - ind))}…</span>` : pyHtml(s.slice(ind));
+    return `<div class="row" id="${id}-r${i}" style="font-size:${size}px;line-height:${lh}px"><div class="hl" id="${id}-h${i}"></div>` +
+           `<span class="ln">${n}</span><span class="tx">${txt}</span></div>`;
+  }).join("");
+  return `<div class="code" id="${id}" style="left:${x}px;top:${y}px;width:${w}px">` +
+         `<div class="hdr"><b>${esc(path)}</b>&nbsp;&nbsp;${esc(range)}</div><div style="padding:10px 0">${rows}</div></div>`;
+}
+// steps: [[t0, [row indices]], ...] in time order. Highlighted rows glow; the rest dim.
+function codeFocus(id, n, steps, t) {
+  const amt = new Array(n).fill(0); let any = 0;
+  steps.forEach(([t0, idx], k) => {
+    const t1 = k + 1 < steps.length ? steps[k + 1][0] : 1e9;
+    const p = win(t, t0, t1, 0.45);
+    any = Math.max(any, p);
+    idx.forEach((i) => { amt[i] = Math.max(amt[i], p); });
+  });
+  for (let i = 0; i < n; i++) {
+    $(`${id}-h${i}`).style.opacity = amt[i];
+    $(`${id}-r${i}`).style.opacity = 1 - 0.5 * any * (1 - amt[i]);
+  }
+}
+
+// ---------------------------------------------------------------- scenes
+const S = {};   // id -> { html, draw(t, A, dur) }
+
+// 01 · The problem ------------------------------------------------
+S["01"] = {
+  html: () => {
+    const docs = [["quote.csv", "CSV"], ["quotation.xlsx", "XLSX"], ["RE: H100 pricing.eml", "email"]];
+    const fields = ["gpu_sku", "gpus_per_node", "node_count", "condition", "location", "unit_price_usd",
+                    "total_price_usd", "lead_time_days", "dealer", "valid_until"];
+    const axisX = (k) => 920 + (k - 200) / 40 * 820;
+    return `
+    <div class="headline" id="s1-h">Quotes arrive as files, not records</div>
+    ${docs.map(([n, k], i) => `
+      <div class="card b-blue" id="s1-doc${i}" style="left:140px;top:${250 + i * 170}px;width:540px;height:140px;border:2px solid var(--blue)">
+        <div class="mono c-blue" style="position:absolute;left:24px;top:18px;font-size:24px">${esc(n)}</div>
+        <div class="pill" style="position:absolute;right:20px;top:18px;background:#1d2a3d;color:var(--blue)">${k}</div>
+        ${[0, 1, 2].map((j) => `<div style="position:absolute;left:24px;top:${70 + j * 20}px;height:8px;border-radius:4px;background:#2a3446;width:${[420, 340, 380][j] - i * 30}px"></div>`).join("")}
+      </div>`).join("")}
+    <div class="card" id="s1-rec" style="left:140px;top:250px;width:540px;height:480px;border:2px solid var(--line)">
+      <div style="position:absolute;left:24px;top:16px;font:600 26px var(--display)">Quote record</div>
+      <div class="muted" style="position:absolute;right:24px;top:22px;font-size:18px">one strict schema</div>
+      ${fields.map((f, i) => `<div class="mono" style="position:absolute;left:24px;top:${66 + i * 40}px;font-size:21px">${f}</div>
+        <div style="position:absolute;right:24px;top:${74 + i * 40}px;width:180px;height:10px;border-radius:5px;background:#263043"></div>`).join("")}
+    </div>
+    <div class="abs" id="s1-axis" style="left:0;top:0;width:1920px;height:520px">
+      <div class="abs" style="left:880px;top:250px;font:600 30px var(--display)">Similar nodes, different dealers</div>
+      <div class="abs mono c-blue" style="left:880px;top:300px;font-size:24px">$200k – $240k per quote</div>
+      <div class="abs" style="left:920px;top:410px;width:820px;height:3px;background:#3a4456"></div>
+      ${[200, 210, 220, 230, 240].map((k) => `<div class="abs" style="left:${axisX(k) - 1}px;top:402px;width:2px;height:18px;background:#3a4456"></div>
+        <div class="abs mono muted" style="left:${axisX(k) - 40}px;top:428px;width:80px;text-align:center;font-size:19px">$${k}k</div>`).join("")}
+      ${[200, 211, 219, 228, 240].map((k, i) => `<div class="abs" id="s1-dot${i}" style="left:${axisX(k) - 13}px;top:398px;width:26px;height:26px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 6px rgba(90,169,255,.18)"></div>`).join("")}
+      <div class="abs muted" style="left:880px;top:470px;font-size:18px">Range from the founders' public Launch YC post · dots illustrative</div>
+    </div>
+    <div class="card" id="s1-bad" style="left:880px;top:560px;width:430px;height:220px;border:2px solid var(--green)">
+      <div class="mono muted" style="position:absolute;left:24px;top:20px;font-size:20px">gpu_sku</div>
+      <div class="mono" style="position:absolute;left:24px;top:56px;font-size:28px">H100-PCIE-80GB</div>
+      <div class="pill" style="position:absolute;right:20px;top:18px;background:rgba(69,196,134,.15);color:var(--green)">ok</div>
+      <div id="s1-x" style="position:absolute;left:24px;top:120px;font:600 22px var(--body);color:var(--red)">✗ looks clean, but it is wrong</div>
+      <div class="muted" style="position:absolute;left:24px;top:170px;font-size:18px">silently wrong → wrong comparison</div>
+    </div>
+    <div class="card" id="s1-flag" style="left:1350px;top:560px;width:450px;height:220px;border:2px solid var(--amber)">
+      <div class="mono muted" style="position:absolute;left:24px;top:20px;font-size:20px">gpu_sku</div>
+      <div class="mono" style="position:absolute;left:24px;top:56px;font-size:28px">"H100"</div>
+      <div class="pill" style="position:absolute;right:20px;top:18px;background:rgba(243,181,74,.15);color:var(--amber)">ambiguous</div>
+      <div style="position:absolute;left:24px;top:120px;font:600 22px var(--body);color:var(--amber)">→ review: matches SXM5 and PCIe</div>
+      <div class="muted" style="position:absolute;left:24px;top:170px;font-size:18px">flagged → a human decides</div>
+    </div>
+    <div class="abs" id="s1-moral" style="left:880px;top:820px;font:600 60px var(--display)">Flag it. <span class="c-amber">Don't guess.</span></div>`;
+  },
+  draw(t, A) {
+    show("s1-h", 1, 0, 0);
+    const merge = prog(t, A("to compare them"), 0.9);
+    for (let i = 0; i < 3; i++) {
+      const p = prog(t, 0.15 + i * 0.45, 0.7);
+      const e = $(`s1-doc${i}`);
+      e.style.opacity = p * (1 - merge);
+      e.style.transform = `translate(${-60 * (1 - p) + 0 * merge}px, ${merge * (250 + 170 - (250 + i * 170))}px) scale(${1 - 0.15 * merge})`;
+    }
+    show("s1-rec", prog(t, A("to compare them", 0.4), 0.8), 0, 0);
+    const ax = prog(t, A("two hundred"), 0.7);
+    show("s1-axis", ax, 0, 16);
+    for (let i = 0; i < 5; i++) {
+      const p = prog(t, A("two hundred", 0.3 + i * 0.25), 0.5);
+      const d = $(`s1-dot${i}`); d.style.opacity = p; d.style.transform = `translateY(${-30 * (1 - p)}px)`;
+    }
+    show("s1-bad", prog(t, A("and a wrong value")), 0, 30);
+    $("s1-x").style.opacity = prog(t, A("looks clean", 0.6), 0.5);
+    show("s1-flag", prog(t, A("worse than one")), 0, 30);
+    show("s1-moral", prog(t, A("gets flagged"), 0.7), 0, 20);
+  },
+};
+
+// 02 · Architecture ------------------------------------------------
+const S2X = (i) => 120 + i * 330;
+S["02"] = {
+  html: () => {
+    const boxes = [
+      ["file", "CSV · XLSX · email", "b-blue", "c-blue"],
+      ["raw_files", "bytes + SHA-256", "b-violet", "c-violet"],
+      ["parse_file()", "spreadsheet | email", "", ""],
+      ["normalize_quote()", "SKU catalog · money · dates", "", ""],
+      ["validate()", "cross-field checks", "", ""],
+    ];
+    return `
+    <div class="headline">One pipeline, one log</div>
+    ${boxes.map(([t, s, b, c], i) => `<div class="box ${b}" id="s2-b${i}" style="left:${S2X(i)}px;top:420px;width:260px;height:110px">
+      <div class="t ${c}" style="font-size:${t.length > 14 ? 23 : 28}px">${t}</div><div class="s">${s}</div></div>`).join("")}
+    <div class="box b-blue dashed" id="s2-gap" style="left:${S2X(2)}px;top:236px;width:260px;height:96px">
+      <div class="t" style="font-size:24px">gap-filler</div><div class="s">mock | LLM · optional<br>locates text only</div></div>
+    <div class="box b-violet" id="s2-ev" style="left:450px;top:690px;width:760px;height:100px">
+      <div class="t c-violet">events</div><div class="s">append-only log · UPDATE / DELETE blocked</div></div>
+    <div class="box" id="s2-proj" style="left:1290px;top:690px;width:240px;height:100px">
+      <div class="t" style="font-size:26px">project()</div><div class="s">replay → current quotes</div></div>
+    <div class="box b-amber" id="s2-rev" style="left:1610px;top:620px;width:230px;height:84px">
+      <div class="t c-amber" style="font-size:23px">review queue</div></div>
+    <div class="box b-green" id="s2-cmp" style="left:1610px;top:776px;width:230px;height:84px">
+      <div class="t c-green" style="font-size:23px">compare()</div></div>
+    <div class="abs muted" id="s2-note" style="left:120px;top:900px;font-size:24px">Plain code does the exact work. The optional model only points at text.</div>
+    <svg class="layer">
+      ${[0, 1, 2, 3].map((i) => arrow(`s2-a${i}`, "#8b94a7")).join("")}
+      ${[1, 2, 3, 4].map((i) => arrow(`s2-d${i}`, "#a78bfa", 2.5, "7 7")).join("")}
+      ${arrow("s2-g", "#5aa9ff", 2.5, "7 7")}
+      ${arrow("s2-e1", "#8b94a7")}${arrow("s2-e2", "#f3b54a")}${arrow("s2-e3", "#45c486")}
+    </svg>`;
+  },
+  draw(t, A) {
+    const at = [A("a file comes in"), A("raw bytes"), A("a parser reads"), A("a normalizer"), A("validators check")];
+    at.forEach((a, i) => show(`s2-b${i}`, prog(t, a, 0.6), -20, 0));
+    for (let i = 0; i < 4; i++) {
+      drawLine(`s2-a${i}`, S2X(i) + 262, 475, S2X(i + 1) - 6, 475, prog(t, at[i + 1] - 0.1, 0.5));
+    }
+    const ev = A("every step");
+    show("s2-ev", prog(t, ev, 0.6), 0, 20);
+    for (let i = 1; i <= 4; i++) {
+      drawLine(`s2-d${i}`, S2X(i) + 130, 532, Math.max(470, Math.min(1190, S2X(i) + 130)), 686, prog(t, ev + 0.3 + i * 0.15, 0.5));
+    }
+    const lg = A("append-only log");
+    show("s2-proj", prog(t, lg + 0.3, 0.5), -20, 0);
+    drawLine("s2-e1", 1212, 740, 1286, 740, prog(t, lg + 0.2, 0.4));
+    show("s2-rev", prog(t, lg + 0.8, 0.5), -20, 0);
+    show("s2-cmp", prog(t, lg + 1.0, 0.5), -20, 0);
+    drawLine("s2-e2", 1532, 722, 1604, 668, prog(t, lg + 0.7, 0.4));
+    drawLine("s2-e3", 1532, 758, 1604, 812, prog(t, lg + 0.9, 0.4));
+    const g = A("and an l-l-m");
+    show("s2-gap", prog(t, g, 0.6), 0, -20);
+    drawLine("s2-g", S2X(2) + 130, 334, S2X(2) + 130, 414, prog(t, g + 0.4, 0.4));
+    show("s2-note", prog(t, A("find text", 0.3), 0.6), 0, 12);
+  },
+};
+
+// 03 · One row, end to end --------------------------------------
+const S3_COLS = ["Model", "GPU Count", "Qty", "Cond", "Ships From", "Price/Node", "Extended Price", "Lead Time", "Expires", "Currency", "Warranty"];
+const S3_ROW = ["H100 SXM", "8", "16", "new", "San Jose, CA", "$238,000.00", "$3,820,000.00", "3 weeks", "Nov 22, 2026", "USD", "1 year"];
+const S3_ST = ["ingest()", "parse_spreadsheet()", "normalize_quote()", "validate()"];
+const S3X = (i) => 120 + i * 440;
+const S3_CODE = [
+  [22, '    unit, nodes, total = out["unit_price_usd"], out["node_count"], out["total_price_usd"]'],
+  [23, '    if all(f.status == Status.OK for f in (unit, nodes, total)):'],
+  [24, '        expected = round(float(unit.value) * int(nodes.value), 2)'],
+  [25, '        if abs(float(total.value) - expected) > TOLERANCE_USD:'],
+  [26, '            out["total_price_usd"] = total.model_copy(update={'],
+  [27, '                "status": Status.INVALID,'],
+  [28, '                "code": "total_mismatch",'],
+  [29, '                "reason": (f"total ${float(total.value):,.2f} ≠ unit ${float(unit.value):,.2f} "'],
+  [30, '                           f"× {nodes.value} nodes = ${expected:,.2f}"),'],
+  [31, '            })'],
+];
+S["03"] = {
+  html: () => {
+    const cw = 150, x0 = 150;
+    const letters = S3_COLS.map((_, i) => `<div class="abs mono muted" style="left:${x0 + i * cw}px;top:236px;width:${cw}px;text-align:center;font-size:16px">${String.fromCharCode(65 + i)}</div>`).join("");
+    const hdr = S3_COLS.map((c, i) => `<div class="cell" id="s3-hc${i}" style="left:${x0 + i * cw}px;top:262px;width:${cw}px;font-family:var(--body);font-weight:600;background:#121722;${c === "Warranty" ? "" : ""}">${c}</div>`).join("");
+    const row = S3_ROW.map((c, i) => `<div class="cell" style="left:${x0 + i * cw}px;top:306px;width:${cw}px;background:rgba(90,169,255,.10);color:#cfe4ff">${esc(c)}</div>`).join("");
+    const maps = [["Model", "gpu_sku"], ["GPU Count", "gpus_per_node"], ["Qty", "node_count"], ["Cond", "condition"], ["Ships From", "location"],
+                  ["Price/Node", "unit_price_usd"], ["Extended Price", "total_price_usd"], ["Lead Time", "lead_time_days"], ["Expires", "valid_until"], ["Currency", "currency"]];
+    const norms = [['"H100 SXM"', "H100-SXM5-80GB", "A6"], ['"3 weeks"', "21 days", "H6"], ['"$238,000.00"', "238000 USD", "F6"]];
+    return `
+    <div class="headline">Row 6 of the Helix quote sheet</div>
+    <div class="abs mono muted" style="left:120px;top:186px;font-size:21px">data/samples/02_helix_rfq_response.csv</div>
+    ${letters}${hdr}${row}
+    <div class="abs mono muted" style="left:110px;top:274px;font-size:17px">3</div>
+    <div class="abs mono c-blue" style="left:110px;top:318px;font-size:17px">6</div>
+    ${S3_ST.map((s, i) => `<div class="box" id="s3-st${i}" style="left:${S3X(i)}px;top:400px;width:360px;height:84px"><div class="t" style="font-size:25px">${s}</div></div>`).join("")}
+    <svg class="layer">${[0, 1, 2].map((i) => arrow(`s3-a${i}`, "#8b94a7")).join("")}</svg>
+    <div class="chip" id="s3-tok" style="left:0;top:500px;border-color:var(--blue);color:var(--blue);background:#14213a">row 6</div>
+
+    <div class="abs" id="s3-d0" style="left:120px;top:580px;width:1680px">
+      <div style="font:600 32px var(--display)">Raw bytes + SHA-256 are stored <span class="c-violet">before</span> any parsing</div>
+      <div class="chip" style="position:relative;display:inline-block;margin-top:28px;border-color:var(--violet);color:var(--violet)">event · file_received · sha256 (64 hex chars)</div>
+      <div class="muted" style="margin-top:22px;font-size:22px">Same hash again → <span class="mono">file_duplicate</span>, no new quotes</div>
+    </div>
+
+    <div class="abs" id="s3-d1" style="left:120px;top:570px;width:1680px;height:440px">
+      <div style="font:600 30px var(--display)">Header row found → alias table maps each column</div>
+      ${maps.map(([a, b], i) => `<div class="abs mono" style="left:${(i % 2) * 560}px;top:${60 + Math.floor(i / 2) * 44}px;font-size:22px"><span class="muted">${a}</span> → <span class="c-blue">${b}</span></div>`).join("")}
+      <div class="chip" id="s3-unm" style="left:1150px;top:64px;border-color:var(--amber);color:var(--amber)">unmapped: Warranty</div>
+      <div class="abs muted" id="s3-unm2" style="left:1150px;top:120px;font-size:20px;width:520px">listed in the file view, not silently dropped</div>
+      <div class="abs muted" style="left:1150px;top:200px;font-size:20px;width:520px">dealer ← title cell <span class="mono">A1</span> "Dealer: Helix Systems"</div>
+    </div>
+
+    <div class="abs" id="s3-d2" style="left:120px;top:570px;width:1680px;height:440px">
+      <div style="font:600 30px var(--display)">Each raw cell → typed value + status + source</div>
+      ${norms.map(([r, v, src], i) => `<div class="abs mono" id="s3-n${i}" style="left:0;top:${70 + i * 76}px;font-size:28px">
+        <span style="display:inline-block;width:300px;color:#cfe4ff">${esc(r)}</span> → <span class="c-green" style="display:inline-block;width:330px">${v}</span>
+        <span class="muted" style="font-size:21px">${src} · rule · </span><span class="pill" style="background:rgba(69,196,134,.15);color:var(--green)">ok</span></div>`).join("")}
+      <div class="abs muted" style="left:1150px;top:80px;font-size:20px;width:520px">"H100" + "SXM", no "PCIe" → exactly one catalog SKU</div>
+    </div>
+
+    <div class="abs" id="s3-d3" style="left:0;top:0;width:1920px;height:1080px">
+      ${codePanel("s3-code", { x: 120, y: 556, w: 1150, path: "intake/validators.py", range: "lines 22–31", lines: S3_CODE, size: 19, lh: 33 })}
+      <div class="abs mono" id="s3-m1" style="left:1310px;top:576px;font-size:27px;width:520px">$238,000 × 16<br><span class="muted">=</span> $3,808,000</div>
+      <div class="abs mono c-red" id="s3-m2" style="left:1310px;top:690px;font-size:27px;width:520px">sheet: $3,820,000 ≠</div>
+      <div class="abs" id="s3-m3" style="left:1310px;top:760px;width:500px">
+        <div class="mono" style="font-size:21px">G6 total_price_usd → <span class="c-red">invalid</span></div>
+        <div class="mono muted" style="font-size:18px;margin-top:6px">code: total_mismatch</div></div>
+      <div class="chip" id="s3-m4" style="left:1310px;top:870px;border-color:var(--amber);color:var(--amber);font-size:19px">needs_review · 1 field: total_price_usd</div>
+    </div>`;
+  },
+  draw(t, A) {
+    const at = [A("ingest hashes"), A("the spreadsheet parser"), A("the normalizer"), A("then validate")];
+    const end = 1e9;
+    for (let i = 0; i < 4; i++) {
+      const p = prog(t, at[i] - 0.4, 0.5);
+      show(`s3-st${i}`, Math.max(0.35, p), 0, 0);
+      const active = win(t, at[i], i < 3 ? at[i + 1] : end, 0.4);
+      const e = $(`s3-st${i}`);
+      e.style.borderColor = active > 0.5 ? "var(--blue)" : "var(--line)";
+      e.style.background = `rgba(90,169,255,${0.12 * active})`;
+      if (i < 3) drawLine(`s3-a${i}`, S3X(i) + 362, 442, S3X(i + 1) - 6, 442, prog(t, at[i + 1] - 0.5, 0.5));
+    }
+    // token travels between stations
+    let x = S3X(0) + 180;
+    for (let i = 1; i < 4; i++) x = lerp(x, S3X(i) + 180, prog(t, at[i] - 0.3, 0.7));
+    const tok = $("s3-tok"); tok.style.opacity = prog(t, at[0] - 0.3, 0.5);
+    tok.style.transform = `translate(${x - 50}px, 0)`;
+    // validate: token turns amber at "goes to review"
+    const rv = prog(t, A("goes to review"), 0.4);
+    tok.style.borderColor = rv > .5 ? "var(--amber)" : "var(--blue)";
+    tok.style.color = rv > .5 ? "var(--amber)" : "var(--blue)";
+    tok.textContent = rv > .5 ? "row 6 · needs_review" : "row 6";
+
+    show("s3-d0", win(t, at[0], at[1]), 0, 20);
+    show("s3-d1", win(t, at[1], at[2]), 0, 20);
+    const wu = prog(t, A("warranty has no match"), 0.5);
+    show("s3-unm", wu, 0, 10); show("s3-unm2", wu, 0, 10);
+    const hc = $("s3-hc10"); hc.style.color = wu > .5 && t < at[3] ? "var(--amber)" : "";
+    hc.style.borderColor = wu > .5 && t < at[3] ? "var(--amber)" : "";
+    show("s3-d2", win(t, at[2], at[3]), 0, 20);
+    show("s3-n0", prog(t, A("h one hundred s-x-m"), 0.5), -20, 0);
+    show("s3-n1", prog(t, A("three weeks"), 0.5), -20, 0);
+    show("s3-n2", prog(t, A("twenty-one days", 0.6), 0.5), -20, 0);
+    show("s3-d3", prog(t, at[3], 0.6), 0, 20);
+    codeFocus("s3-code", S3_CODE.length, [[A("checks the math"), [1, 2, 3]], [A("the sheet says"), [3, 4, 5, 6, 7, 8]]], t);
+    show("s3-m1", prog(t, A("two hundred thirty-eight"), 0.5), 0, 12);
+    show("s3-m2", prog(t, A("the sheet says"), 0.5), 0, 12);
+    show("s3-m3", prog(t, A("marked invalid"), 0.5), 0, 12);
+    show("s3-m4", rv, 0, 12);
+  },
+};
+
+// 04 · Event log & review -----------------------------------------
+const S4_CODE = [
+  [159, '    if not (reason or "").strip():'],
+  [160, '        raise ReviewError("a reason is required for every manual edit")'],
+  ["", '    …'],
+  [166, '    new = normalize_reviewer_value(field_name, value)'],
+  [167, '    if new.status != Status.OK:'],
+  [168, '        raise ReviewError(f"value not accepted: {new.reason}")'],
+  ["", '    …'],
+  [170, '    append(session, "field_reviewed", {'],
+  [171, '        "field": field_name, "before": view.fields[field_name].model_dump(mode="json"),'],
+  [172, '        "after": new.model_dump(mode="json"), "reason": reason.strip(), "reviewer": reviewer,'],
+  [173, '    }, file_id=view.file_id, quote_id=quote_id)'],
+  [174, '    fields = dict(view.fields, **{field_name: new})'],
+  [175, '    _record_validation(session, view.file_id, quote_id, fields, as_of, cause="review", rejected_reason=view.rejected_reason)'],
+];
+const S4_EV = ["file_received", "file_parsed", "quote_extracted", "quote_normalized", "quote_validated", "field_reviewed", "quote_validated"];
+S["04"] = {
+  html: () => {
+    const table = (id, x, w, name, cols) => `<div class="card" id="${id}" style="left:${x}px;top:220px;width:${w}px;border:2px solid var(--violet)">
+      <div class="mono c-violet" style="padding:12px 20px;font-size:26px;border-bottom:1px solid var(--line)">${name}</div>
+      ${cols.map(([c, n]) => `<div class="mono" style="padding:7px 20px;font-size:21px">${c} <span class="muted" style="font-size:18px">${n}</span></div>`).join("")}</div>`;
+    return `
+    <div class="headline">Nothing is overwritten</div>
+    <div class="abs" id="s4-a" style="left:0;top:0;width:1920px;height:1080px">
+      ${table("s4-raw", 120, 430, "raw_files", [["id", ""], ["filename", ""], ["sha256", "UNIQUE"], ["content", "raw bytes"], ["received_at", ""]])}
+      ${table("s4-evt", 690, 470, "events", [["id", ""], ["file_id", "→ raw_files"], ["quote_id", ""], ["type", ""], ["payload", "JSON"], ["created_at", ""]])}
+      <div class="abs muted mono" id="s4-rel" style="left:566px;top:266px;font-size:18px;white-space:nowrap">1 → many</div>
+      <div class="abs" id="s4-rel2" style="left:556px;top:300px;width:128px;height:2px;background:var(--violet)"></div>
+      <div class="chip" id="s4-upd" style="left:1300px;top:236px;border-color:var(--red);color:var(--red)">UPDATE events SET …</div>
+      <div class="card" id="s4-sh1" style="left:1300px;top:320px;width:500px;height:100px;border:2px solid var(--red)">
+        <div style="position:absolute;left:22px;top:14px;font:600 26px var(--display)">✕ ORM guard</div>
+        <div class="mono muted" style="position:absolute;left:22px;top:58px;font-size:18px">before_flush raises AppendOnlyError</div></div>
+      <div class="card" id="s4-sh2" style="left:1300px;top:440px;width:500px;height:100px;border:2px solid var(--red)">
+        <div style="position:absolute;left:22px;top:14px;font:600 26px var(--display)">✕ Database trigger</div>
+        <div class="mono muted" style="position:absolute;left:22px;top:58px;font-size:18px">SQLite and PostgreSQL: "append-only"</div></div>
+    </div>
+    <div class="abs" id="s4-b" style="left:0;top:0;width:1920px;height:1080px">
+      ${codePanel("s4-code", { x: 120, y: 200, w: 1680, path: "intake/pipeline.py", range: "review_field() · lines 159–175", lines: S4_CODE, size: 20, lh: 34 })}
+    </div>
+    <div class="abs" id="s4-c" style="left:0;top:0;width:1920px;height:1080px">
+      <div class="abs mono muted" style="left:120px;top:742px;font-size:20px">events for quote Q2.3 (row 6)</div>
+      ${S4_EV.map((e, i) => `<div class="chip" id="s4-e${i}" style="left:${120 + i * 241}px;top:780px;width:228px;text-align:center;font-size:${e.length > 15 ? 17 : 18}px;padding:10px 6px;border-color:var(--violet);color:${i >= 5 ? "var(--text)" : "var(--violet)"};background:${i >= 5 ? "#251f3d" : "var(--panel)"}">${e}</div>`).join("")}
+      <div class="abs mono" id="s4-e5s" style="left:${120 + 5 * 241}px;top:840px;width:228px;text-align:center;font-size:16px;color:var(--amber)">before → after · reason</div>
+      <div class="abs mono" id="s4-e6s" style="left:${120 + 6 * 241}px;top:840px;width:228px;text-align:center;font-size:16px;color:var(--muted)">cause: review</div>
+      <div class="abs" id="s4-orig" style="left:120px;top:836px;width:1196px;height:12px;border:2px solid var(--green);border-top:none;border-radius:0 0 10px 10px"></div>
+      <div class="abs c-green" id="s4-orig2" style="left:120px;top:862px;width:1196px;text-align:center;font:600 24px var(--body)">original extraction stays in the log, unchanged</div>
+    </div>`;
+  },
+  draw(t, A) {
+    const fix = A("to fix a field");
+    show("s4-a", 1 - prog(t, fix - 0.2, 0.5), 0, 0);
+    show("s4-raw", prog(t, A("two tables"), 0.5), 0, 20);
+    show("s4-evt", prog(t, A("and events"), 0.5), 0, 20);
+    const rel = prog(t, A("and events", 0.4), 0.5);
+    show("s4-rel", rel, 0, 0); $("s4-rel2").style.opacity = rel;
+    $("s4-rel2").style.transform = `scaleX(${rel})`; $("s4-rel2").style.transformOrigin = "0 0";
+    const b = A("blocked twice");
+    const upd = prog(t, A("updates and deletes"), 0.5);
+    const e = $("s4-upd"); e.style.opacity = upd * (1 - 0.6 * prog(t, A("database trigger", 0.6), 0.5));
+    e.style.transform = `translate(${-80 * prog(t, b, 0.6)}px, 0)`;
+    e.style.textDecoration = prog(t, A("database trigger", 0.6), 0.3) > .5 ? "line-through" : "none";
+    show("s4-sh1", prog(t, A("o-r-m guard"), 0.5), 40, 0);
+    show("s4-sh2", prog(t, A("database trigger"), 0.5), 40, 0);
+    show("s4-b", prog(t, fix, 0.6), 0, 20);
+    codeFocus("s4-code", S4_CODE.length, [[A("required reason"), [0, 1]], [A("the value goes"), [3, 4, 5]], [A("the edit becomes"), [7, 8, 9, 10, 11, 12]]], t);
+    const eb = A("the edit becomes");
+    show("s4-c", prog(t, eb, 0.5), 0, 0);
+    for (let i = 0; i < 5; i++) show(`s4-e${i}`, prog(t, eb + i * 0.12, 0.4), 0, 16);
+    show("s4-e5", prog(t, A("new event"), 0.5), 0, 16); show("s4-e5s", prog(t, A("new event", 0.2), 0.5), 0, 10);
+    show("s4-e6", prog(t, A("validated again"), 0.5), 0, 16); show("s4-e6s", prog(t, A("validated again", 0.2), 0.5), 0, 10);
+    const o = prog(t, A("the original stays"), 0.5);
+    show("s4-orig", o, 0, 0); show("s4-orig2", o, 0, 10);
+  },
+};
+
+// 05 · Emails & the gap-filler ------------------------------------
+const S5_CODE = [
+  [95, 'def ground(found: dict[str, dict], lines: Lines, extractor: Extractor) -> tuple[dict[str, RawCell], list[str]]:'],
+  [96, '    """Keep only spans that appear verbatim on the cited line."""'],
+  [97, '    by_no = dict(lines)'],
+  [98, '    cells: dict[str, RawCell] = {}'],
+  [99, '    notes: list[str] = []'],
+  [100, '    for field, hit in found.items():'],
+  [101, '        text = by_no.get(hit["line"], "")'],
+  [102, '        span = hit["span"].strip()'],
+  [103, '        if span and span.lower() in text.lower():'],
+  [104, '            cells[field] = RawCell(text=span, source=f"L{hit[\'line\']}", extractor=extractor)'],
+  [105, '        else:'],
+  [106, '            notes.append(f"{extractor.value} span for {field} not found on line {hit[\'line\']}; ignored")'],
+  [107, '    return cells, notes'],
+];
+S["05"] = {
+  html: () => {
+    const R = (s, id) => `<span id="${id}" style="border-radius:4px;padding:0 2px">${esc(s)}</span>`;
+    const L = [
+      [8, `Good news on the H200 side. We have ${R("8 x 8-GPU NVIDIA H200 nodes, new, at $318,500 per node", "s5-r1")}`],
+      [9, `${R("(total $2,548,000)", "s5-r2")}. We can deliver in ${R("about four weeks", "s5-m1")}.`],
+      [10, `Everything is staged at our ${R("Reno, NV", "s5-m2")} facility.`],
+      [11, `${R("Valid until 17 November 2026", "s5-r3")}.`],
+    ];
+    return `
+    <div class="headline">The model may point. The parser decides.</div>
+    <div class="chip" id="s5-f1" style="left:1290px;top:62px;font-size:17px;border-color:var(--blue);color:var(--blue)">LLM_PROVIDER unset → mock</div>
+    <div class="chip" id="s5-f2" style="left:1290px;top:112px;font-size:17px;border-color:var(--line);color:var(--muted)">LLM error → field stays missing</div>
+    <div class="code" style="left:120px;top:186px;width:1680px;padding:14px 0">
+      <div class="mono muted" style="position:absolute;right:20px;top:10px;font-size:16px">data/samples/25_oakline_h200.eml</div>
+      ${L.map(([n, s]) => `<div class="row" style="font-size:21px;line-height:38px"><span class="ln">${n}</span><span class="tx">${s}</span></div>`).join("")}
+      <div class="abs" id="s5-tags" style="right:20px;top:120px;font-size:16px">
+        <span class="pill" style="background:rgba(69,196,134,.18);color:var(--green)">rule</span>
+        <span class="pill" style="background:rgba(243,181,74,.16);color:var(--amber)">mock</span></div>
+    </div>
+    <div class="card" id="s5-ok" style="left:120px;top:384px;width:820px;height:150px;border:2px solid var(--blue);border-style:dashed">
+      <div class="muted" style="position:absolute;left:20px;top:12px;font-size:19px">gap-filler (mock) returns only a span and a line</div>
+      <div class="mono" id="s5-ok1" style="position:absolute;left:20px;top:48px;font-size:19px">{"lead_time_days": {"span": "about four weeks", "line": 9}}</div>
+      <div class="mono c-green" id="s5-ok2" style="position:absolute;left:20px;top:94px;font-size:21px">✓ on line 9 → parse_lead_time → 28 days · mock · ok</div>
+    </div>
+    <div class="card" id="s5-bad" style="left:980px;top:384px;width:820px;height:150px;border:2px solid var(--red)">
+      <div class="muted" style="position:absolute;left:20px;top:12px;font-size:19px">a made-up span (illustrative)</div>
+      <div class="mono" style="position:absolute;left:20px;top:48px;font-size:19px">{"lead_time_days": {"span": "2 weeks", "line": 9}}</div>
+      <div class="mono c-red" style="position:absolute;left:20px;top:94px;font-size:21px">✗ not found on line 9 → ignored → missing</div>
+    </div>
+    ${codePanel("s5-code", { x: 120, y: 556, w: 1680, path: "intake/extractors.py", range: "ground() · lines 95–107", lines: S5_CODE, size: 19, lh: 30 })}`;
+  },
+  draw(t, A) {
+    const rules = A("line-based rules");
+    ["s5-r1", "s5-r2", "s5-r3"].forEach((id, i) => {
+      const p = prog(t, rules + 0.2 + i * 0.25, 0.5);
+      $(id).style.background = `rgba(69,196,134,${0.28 * p})`;
+    });
+    const gf = A("a gap-filler steps");
+    ["s5-m1", "s5-m2"].forEach((id, i) => {
+      const p = prog(t, gf + 0.3 + i * 0.3, 0.5);
+      $(id).style.background = `rgba(243,181,74,${0.28 * p})`;
+      $(id).style.outline = p > 0.5 ? "2px dashed var(--amber)" : "none";
+    });
+    show("s5-tags", prog(t, rules, 0.5), 0, 0);
+    show("s5-ok", prog(t, gf, 0.5), 0, 20);
+    show("s5-ok1", prog(t, A("a span of text"), 0.5), 0, 10);
+    show("s5-ok2", prog(t, A("the normal parser"), 0.5), 0, 10);
+    show("s5-code", prog(t, A("the ground function"), 0.6), 0, 20);
+    codeFocus("s5-code", S5_CODE.length, [[A("only if it's really"), [7, 8]], [A("the normal parser"), [9]], [A("a made-up span"), [10, 11]]], t);
+    show("s5-bad", prog(t, A("a made-up span"), 0.5), 0, 20);
+    show("s5-f1", prog(t, A("so the model"), 0.5), 0, -10);
+    show("s5-f2", prog(t, A("so the model", 0.3), 0.5), 0, -10);
+  },
+};
+
+// 06 · Compare & run ----------------------------------------------
+const S6_OK = [["Q8.1", "Meridian GPU Supply", 205000], ["Q14.1", "Ridgeline Hardware", 219500], ["Q9.1", "Oakline Technologies", 221500],
+  ["Q18.1", "Bluefin Servers", 224000], ["Q17.1", "Vantage Node Co", 225500], ["Q21.1", "Tidewater Systems", 230000],
+  ["Q10.1", "Bluefin Servers", 231500], ["Q2.1", "Helix Systems", 234500], ["Q1.1", "Northwind Compute", 236000], ["Q12.1", "Helix Systems", 236500]];
+// r = invalid / rejected, a = needs review, g = different spec
+const S6_X = [["Q2.3", "r", "total ≠ unit × 16 nodes"], ["Q3.1", "a", "SKU ambiguous: SXM5 or PCIe"], ["Q4.1", "r", "expired 2026-10-19"],
+  ["Q4.2", "g", "H100-PCIE-80GB, RFQ wants SXM5"], ["Q5.1", "a", "condition missing (never inferred)"], ["Q6.1", "g", "refurbished, RFQ wants new"],
+  ["Q7.1", "g", "4 GPUs/node, RFQ wants 8"], ["Q9.2", "g", "H100-PCIE-80GB, RFQ wants SXM5"], ["Q11.3", "g", "refurbished, RFQ wants new"],
+  ["Q12.2", "r", "expired 2026-10-05"], ["Q13.3", "g", "H100-PCIE-80GB, RFQ wants SXM5"], ["Q15.1", "r", "quoted in EUR, not converted"],
+  ["Q24.1", "a", "SKU ambiguous; lead time is a range"]];
+S["06"] = {
+  html: () => {
+    const col = { r: "var(--red)", a: "var(--amber)", g: "#7b8496" };
+    const keys = [["gpu_sku", "H100-SXM5-80GB"], ["gpus_per_node", "8"], ["condition", "new"], ["every field", "ok"]];
+    return `
+    <div class="headline">Compare only like-for-like</div>
+    <div class="card" style="left:120px;top:186px;width:1680px;height:76px;border:2px solid var(--green)">
+      <div style="position:absolute;left:24px;top:14px;font:600 34px var(--display)">RFQ-1001 <span class="muted">·</span> 16× 8-GPU H100 SXM5 nodes, new</div></div>
+    ${keys.map(([k, v], i) => `<div class="chip" id="s6-k${i}" style="left:${120 + i * 420}px;top:278px;border-color:var(--green)"><span class="muted">${k}</span> = <span class="c-green">${v}</span></div>`).join("")}
+    <div class="abs" style="left:120px;top:350px;font:600 28px var(--display)" id="s6-ct">Comparable <span class="c-green">· 10</span> <span class="muted" style="font:400 19px var(--body)">ranked by price per node</span></div>
+    ${S6_OK.map(([q, d, p], i) => `<div class="abs" id="s6-o${i}" style="left:120px;top:${398 + i * 52}px;width:820px;height:44px">
+      <span class="mono muted" style="position:absolute;left:0;top:8px;font-size:19px">${q}</span>
+      <span style="position:absolute;left:84px;top:7px;font-size:20px">${d}</span>
+      <div style="position:absolute;left:330px;top:12px;height:20px;border-radius:4px;background:var(--green);opacity:.85;width:${30 + (p - 200000) / 40000 * 330}px"></div>
+      <span class="mono" style="position:absolute;right:0;top:7px;font-size:20px">$${p.toLocaleString("en-US")}</span></div>`).join("")}
+    <div class="abs" style="left:1000px;top:350px;font:600 28px var(--display)" id="s6-xt">Excluded <span class="c-red">· 13</span>
+      <span style="font:400 17px var(--body)"><span class="c-red">●</span> invalid/expired <span class="c-amber">●</span> needs review <span style="color:#7b8496">●</span> different spec</span></div>
+    ${S6_X.map(([q, k, r], i) => `<div class="abs" id="s6-x${i}" style="left:1000px;top:${398 + i * 44}px;width:800px;height:40px;font-size:19px">
+      <span style="color:${col[k]}">●</span> <span class="mono muted" style="display:inline-block;width:76px">${q}</span> ${esc(r)}</div>`).join("")}
+    <div class="abs" id="s6-dim" style="left:0;top:0;width:1920px;height:1080px;background:rgba(5,7,10,.86)"></div>
+    <div class="code" id="s6-term" style="left:300px;top:380px;width:1320px;padding:18px 0 22px">
+      <div class="hdr" style="position:absolute;top:0;left:0;right:0;height:40px;font-size:17px">terminal · repo root</div>
+      <div style="height:30px"></div>
+      <div class="row" id="s6-t0" style="font-size:24px;line-height:46px"><span class="ln">$</span><span class="tx">pip install -r requirements.txt &amp;&amp; python -m intake.demo</span></div>
+      <div class="row" id="s6-t1" style="font-size:24px;line-height:46px"><span class="ln"></span><span class="tx" style="color:var(--muted)">Seeded 25 files (as of 2026-11-02).</span></div>
+      <div class="row" id="s6-t2" style="font-size:24px;line-height:46px"><span class="ln"></span><span class="tx">Open <span class="c-blue">http://127.0.0.1:8000</span></span></div>
+    </div>
+    <div class="abs" id="s6-pages" style="left:300px;top:612px;width:1320px;text-align:center;background:#0b0e14;border:1px solid var(--line);border-radius:14px;padding:26px 0 22px">
+      ${["Inbox", "Extraction", "Review", "Compare", "Audit log"].map((p) => `<span class="chip" style="position:relative;display:inline-block;margin:0 8px">${p}</span>`).join("")}
+      <div class="muted" style="margin-top:22px;font-size:22px">No API keys needed · synthetic data only</div></div>`;
+  },
+  draw(t, A) {
+    const k = [A("its skew"), A("gpus per node"), A("and condition"), A("every field is okay")];
+    k.forEach((a, i) => show(`s6-k${i}`, prog(t, a, 0.5), 0, 12));
+    const q = A("ten quotes qualify");
+    show("s6-ct", prog(t, q - 0.3, 0.5), 0, 12);
+    for (let i = 0; i < 10; i++) show(`s6-o${i}`, prog(t, q + i * 0.12, 0.4), -20, 0);
+    const x = A("thirteen related");
+    show("s6-xt", prog(t, x - 0.2, 0.5), 0, 12);
+    for (let i = 0; i < 13; i++) show(`s6-x${i}`, prog(t, x + 0.2 + i * 0.22, 0.4), -20, 0);
+    const r = A("to try it");
+    $("s6-dim").style.opacity = prog(t, r, 0.5);
+    show("s6-term", prog(t, r, 0.5), 0, 30);
+    show("s6-t0", prog(t, r + 0.3, 0.3), 0, 0);
+    show("s6-t1", prog(t, A("python dash m", 0.6), 0.3), 0, 0);
+    show("s6-t2", prog(t, A("python dash m", 1.2), 0.3), 0, 0);
+    show("s6-pages", prog(t, A("python dash m", 1.6), 0.5), 0, 16);
+  },
+};
+
+// 07 · Gotchas & limits -------------------------------------------
+const S7_CARDS = [
+  ["amber", "Validity uses a pinned date", 'INTAKE_AS_OF = 2026-11-02 in the demo · unset → date.today(), so the samples expire'],
+  ["amber", "The eval is optimistic", "0 wrong values marked ok · 598/598 rule fields, but rules and data were written together"],
+  ["blue", "Small catalog: 7 SKUs", "a node is GPU model × count · no CPU, NIC, storage or chassis"],
+  ["red", "No currency conversion", "non-USD prices are always flagged (non_usd), never converted"],
+  ["violet", "Replay on every request", "project() rebuilds every quote from the event log · fine for hundreds, not millions"],
+];
+const S7_NEXT = ["Real, redacted dealer files → rebuild the eval", "Full node configuration (CPU, NIC, storage)", "Measure the LLM against the mock, field by field", "Materialized projection + reviewer identity"];
+S["07"] = {
+  html: () => `
+    <div class="headline">Know before you trust it</div>
+    ${S7_CARDS.map(([c, h, s], i) => `<div class="card" id="s7-c${i}" style="left:120px;top:${196 + i * 150}px;width:1010px;height:130px">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:8px;border-radius:14px 0 0 14px;background:var(--${c})"></div>
+      <div style="position:absolute;left:32px;top:18px;font:600 30px var(--display)">${h}</div>
+      <div class="mono muted" style="position:absolute;left:32px;top:68px;right:24px;font-size:19px;line-height:26px">${esc(s)}</div></div>`).join("")}
+    <div class="abs" id="s7-n" style="left:1200px;top:196px;width:600px">
+      <div style="font:600 32px var(--display)">Next steps</div>
+      ${S7_NEXT.map((n) => `<div style="margin-top:22px;font-size:23px;line-height:32px;padding-left:22px;border-left:3px solid var(--green)">${esc(n)}</div>`).join("")}
+      <div class="muted" style="margin-top:40px;font-size:19px;line-height:28px">Also: email rules are English and line-based; a location must look like <span class="mono">City, ST</span>; the reviewer is always <span class="mono">ops</span>.</div>
+    </div>`,
+  draw(t, A) {
+    ["pinned dataset", "the e-val shows", "the catalog has", "non-dollar prices", "and the quote view"].forEach((p, i) =>
+      show(`s7-c${i}`, prog(t, A(p), 0.5), -24, 0));
+    show("s7-n", prog(t, A("replayed on every", 0.9), 0.7), 24, 0);
+  },
+};
+
+// 08 · Recap --------------------------------------------------------
+const S8_LINES = [["violet", "Raw bytes + SHA-256 are stored first", "raw bytes"], ["green", "Deterministic parsers decide every value", "deterministic parsers"],
+  ["amber", "Unclear → review with a reason, never a guess", "anything unclear"], ["violet", "Every change is an event; state is a replay", "every change"],
+  ["green", "Compare only like-for-like quotes", "and only"]];
+S["08"] = {
+  html: () => `
+    <div class="headline">Recap</div>
+    ${S8_LINES.map(([c, s], i) => `<div class="abs" id="s8-l${i}" style="left:160px;top:${240 + i * 110}px;font:500 44px var(--body)">
+      <span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--${c});margin-right:28px;vertical-align:middle"></span>${esc(s)}</div>`).join("")}
+    <div class="chip" id="s8-cmd" style="left:160px;top:850px;font-size:26px;padding:12px 26px;border-color:var(--blue)">
+      <span class="muted">$</span> python -m intake.demo <span class="muted">→</span> <span class="c-blue">http://127.0.0.1:8000</span></div>`,
+  draw(t, A) {
+    S8_LINES.forEach(([, , p], i) => show(`s8-l${i}`, prog(t, A(p), 0.5), -24, 0));
+    show("s8-cmd", prog(t, A("and only", 1.2), 0.6), 0, 16);
+  },
+};
+
+// 09 · Closing card ---------------------------------------------------
+S["09"] = {
+  html: () => `
+    <div class="abs" id="s9-a" style="left:0;top:380px;width:1920px;text-align:center;font:600 150px var(--display);letter-spacing:-.01em">Thank you</div>
+    <div class="abs" id="s9-b" style="left:0;top:590px;width:1920px;text-align:center;font:400 50px var(--body);color:var(--muted)">Made by Medhaja H L</div>
+    <div class="abs" style="left:900px;top:560px;width:120px;height:3px;background:var(--blue)" id="s9-r"></div>`,
+  draw(t) {
+    show("s9-a", prog(t, 0, 0.9), 0, 16);
+    show("s9-r", prog(t, 0.3, 0.8), 0, 0);
+    show("s9-b", prog(t, 0.4, 0.9), 0, 16);
+  },
+};
+
+// ---------------------------------------------------------------- build + renderAt
+const scenes = T.scenes.map((sc, i) => {
+  const el = document.createElement("div");
+  el.className = "scene"; el.id = `scene-${sc.id}`;
+  el.innerHTML = S[sc.id].html();
+  stage.insertBefore(el, $("progress"));
+  return { ...sc, el, idx: i, A: anchors(sc), def: S[sc.id] };
+});
+// Resolve every anchor once up front so missing phrases are reported immediately.
+scenes.forEach((sc) => sc.def.draw(0, sc.A, sc.duration));
+
+window.renderAt = function renderAt(seconds) {
+  const t = Math.max(0, Math.min(seconds, T.total - 1e-6));
+  let cur = scenes[scenes.length - 1];
+  for (const sc of scenes) { if (t >= sc.start && t < sc.start + sc.duration) { cur = sc; break; } }
+  for (const sc of scenes) { if (sc !== cur) { sc.el.style.display = "none"; } }
+  const local = t - cur.start;
+  const first = cur.idx === 0, last = cur.idx === scenes.length - 1;
+  const fin = first ? 1 : ease(local / 0.35);
+  const fout = last ? 1 : 1 - ease((local - (cur.duration - 0.3)) / 0.3);
+  cur.el.style.display = "block";
+  cur.el.style.opacity = Math.min(fin, fout);
+  cur.def.draw(local, cur.A, cur.duration);
+  const ch = $("chapter");
+  ch.innerHTML = last ? "" : `<b>${cur.id}</b> / ${esc(cur.chapter)}`;
+  ch.style.opacity = Math.min(fin, fout);
+  $("progress").style.width = `${(t / T.total) * 1920}px`;
+  return cur.id;
+};
+window.TOTAL = T.total;
+
+// ---------------------------------------------------------------- preview mode (not used by the renderer)
+const params = new URLSearchParams(location.search);
+if (params.has("render")) {
+  document.body.classList.add("render");
+} else {
+  document.body.classList.add("preview");
+  const fit = () => { const s = Math.min(innerWidth / 1920, (innerHeight - 50) / 1080); stage.style.transform = `scale(${s})`;
+                      stage.style.marginBottom = `${-1080 * (1 - s)}px`; stage.style.marginRight = `${-1920 * (1 - s)}px`; };
+  addEventListener("resize", fit); fit();
+  const scrub = $("scrub"), clock = $("clock"), btn = $("play");
+  const audio = new Audio("out/narration.wav");
+  let playing = false, t0 = 0, w0 = 0, haveAudio = false;
+  audio.addEventListener("canplay", () => { haveAudio = true; });
+  const setT = (t) => { renderAt(t); scrub.value = Math.round((t / T.total) * 1000); clock.textContent = t.toFixed(2); };
+  scrub.addEventListener("input", () => { const t = (scrub.value / 1000) * T.total; if (haveAudio) audio.currentTime = t; w0 = t; t0 = performance.now(); setT(t); });
+  btn.addEventListener("click", () => {
+    playing = !playing; btn.textContent = playing ? "Pause" : "Play";
+    w0 = (scrub.value / 1000) * T.total; t0 = performance.now();
+    if (haveAudio) { audio.currentTime = w0; playing ? audio.play() : audio.pause(); }
+    if (playing) requestAnimationFrame(tick);
+  });
+  function tick() {
+    if (!playing) return;
+    const t = haveAudio ? audio.currentTime : w0 + (performance.now() - t0) / 1000;
+    setT(t);
+    if (t >= T.total) { playing = false; btn.textContent = "Play"; return; }
+    requestAnimationFrame(tick);
+  }
+  setT(params.has("t") ? parseFloat(params.get("t")) : 0);
+}
+</script>
+</body>
+</html>

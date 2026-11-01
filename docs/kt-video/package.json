@@ -1,0 +1,15 @@
+{
+  "name": "gpu-quote-normalizer-kt-video",
+  "private": true,
+  "type": "module",
+  "description": "Narrated walkthrough video of the codebase: local TTS, HTML composition, deterministic render.",
+  "scripts": {
+    "kt-video": "node build.mjs",
+    "tts": "node build.mjs --tts-only",
+    "render": "node render.mjs",
+    "setup": "npx playwright install chromium"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1"
+  }
+}
