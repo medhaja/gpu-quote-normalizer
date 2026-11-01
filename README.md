@@ -1,5 +1,11 @@
 # GPU Quote Intake: messy dealer quotes in, validated records out
 
+<!-- walkthrough-video -->
+[![Watch the 3:37 walkthrough](docs/kt-video/poster.jpg)](https://medhaja.github.io/gpu-quote-normalizer/)
+
+**[Watch the 3:37 walkthrough](https://medhaja.github.io/gpu-quote-normalizer/)** (plays in your browser)
+<!-- /walkthrough-video -->
+
 ```bash
 pip install -r requirements.txt && python -m intake.demo     # then open http://127.0.0.1:8000
 ```
