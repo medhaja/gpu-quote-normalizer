@@ -1,0 +1,9 @@
+00:00 The problem
+00:22 Architecture
+00:46 One row, end to end
+01:26 Event log & review
+01:50 Emails & the gap-filler
+02:17 Compare & run
+02:45 Gotchas & limits
+03:14 Recap
+03:31 Thank you
