@@ -24,3 +24,8 @@ Thumbs.db
 
 # Local demo database
 *.db
+
+# Walkthrough video build artifacts
+docs/kt-video/.venv/
+docs/kt-video/audio/
+docs/kt-video/out/

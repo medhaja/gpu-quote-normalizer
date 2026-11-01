@@ -1,0 +1,291 @@
+1
+00:00:00,275 --> 00:00:06,062
+From the outside, GPU servers still seem to trade over email and forwarded spreadsheets.
+
+2
+00:00:06,062 --> 00:00:10,675
+The founders say a buyer asking several dealers for similar nodes can get quotes
+
+3
+00:00:10,675 --> 00:00:13,988
+from two hundred to two hundred forty thousand dollars.
+
+4
+00:00:13,988 --> 00:00:18,050
+To compare them, someone has to turn each file into a record.
+
+5
+00:00:18,050 --> 00:00:22,225
+And a wrong value that looks clean is worse than one that gets flagged.
+
+6
+00:00:23,200 --> 00:00:25,737
+Here's the whole system: one pipeline.
+
+7
+00:00:25,737 --> 00:00:29,375
+A file comes in, and its raw bytes and SHA-256 hash are
+
+8
+00:00:29,375 --> 00:00:30,563
+stored first.
+
+9
+00:00:30,563 --> 00:00:33,187
+A parser reads the spreadsheet or email.
+
+10
+00:00:33,187 --> 00:00:36,500
+A normalizer maps each value to a strict schema.
+
+11
+00:00:36,500 --> 00:00:38,987
+Validators check fields against each other.
+
+12
+00:00:38,987 --> 00:00:41,875
+Every step is an event in an append-only log.
+
+13
+00:00:41,875 --> 00:00:46,175
+And an LLM is optional; it only helps find text in emails.
+
+14
+00:00:47,150 --> 00:00:51,063
+Let's follow one real row: row six of the Helix sample sheet.
+
+15
+00:00:51,063 --> 00:00:53,600
+Ingest hashes the file and logs it.
+
+16
+00:00:53,600 --> 00:00:56,937
+The spreadsheet parser maps headers through an alias table:
+
+17
+00:00:56,937 --> 00:00:59,187
+Model becomes GPU SKU.
+
+18
+00:00:59,187 --> 00:01:01,950
+Warranty has no match, so it's listed as unmapped,
+
+19
+00:01:01,950 --> 00:01:03,087
+not dropped.
+
+20
+00:01:03,087 --> 00:01:07,925
+The normalizer turns "H100 SXM" into exactly one catalog SKU,
+
+21
+00:01:07,925 --> 00:01:10,363
+and "three weeks" into twenty-one days.
+
+22
+00:01:10,363 --> 00:01:12,363
+Then validate checks the math.
+
+23
+00:01:12,725 --> 00:01:16,162
+Two hundred thirty-eight thousand, times sixteen nodes,
+
+24
+00:01:16,162 --> 00:01:18,813
+is three million eight hundred eight thousand.
+
+25
+00:01:18,813 --> 00:01:22,013
+The sheet says three million eight hundred twenty thousand.
+
+26
+00:01:22,013 --> 00:01:25,800
+So the total is marked invalid, and the quote goes to review.
+
+27
+00:01:26,775 --> 00:01:29,400
+Quotes are never stored as rows you can edit.
+
+28
+00:01:29,400 --> 00:01:32,588
+There are two tables: raw files, and events.
+
+29
+00:01:32,588 --> 00:01:36,175
+Updates and deletes are blocked twice: by an ORM guard,
+
+30
+00:01:36,175 --> 00:01:37,988
+and by a database trigger.
+
+31
+00:01:37,988 --> 00:01:42,037
+To fix a field, a reviewer enters a value and a required reason.
+
+32
+00:01:42,037 --> 00:01:44,425
+The value goes through the same parser.
+
+33
+00:01:44,425 --> 00:01:47,850
+The edit becomes a new event, and the quote is validated again.
+
+34
+00:01:47,850 --> 00:01:49,800
+The original stays in the log.
+
+35
+00:01:50,800 --> 00:01:52,275
+Emails are messier.
+
+36
+00:01:52,275 --> 00:01:54,375
+Line-based rules run first.
+
+37
+00:01:54,375 --> 00:01:56,850
+For fields they miss, a gap-filler steps in:
+
+38
+00:01:56,850 --> 00:02:01,338
+a deterministic mock by default, or a real LLM if you configure one.
+
+39
+00:02:01,338 --> 00:02:05,113
+Either way, it only returns a span of text and a line number.
+
+40
+00:02:05,113 --> 00:02:08,650
+The ground function keeps the span only if it's really on that line,
+
+41
+00:02:08,650 --> 00:02:11,137
+and the normal parser decides the value.
+
+42
+00:02:11,137 --> 00:02:12,962
+A made-up span is dropped.
+
+43
+00:02:12,962 --> 00:02:14,650
+So the model can point at text,
+
+44
+00:02:14,650 --> 00:02:17,150
+but never mark a field ok by itself.
+
+45
+00:02:18,175 --> 00:02:19,638
+Now the comparison.
+
+46
+00:02:19,638 --> 00:02:21,812
+A quote is comparable only if its SKU,
+
+47
+00:02:21,812 --> 00:02:24,550
+GPUs per node, and condition match the RFQ,
+
+48
+00:02:24,550 --> 00:02:26,450
+and every field is ok.
+
+49
+00:02:26,450 --> 00:02:29,475
+For RFQ-1001, sixteen H100 nodes,
+
+50
+00:02:29,475 --> 00:02:31,137
+ten quotes qualify.
+
+51
+00:02:31,137 --> 00:02:34,138
+Thirteen related quotes are excluded, each with a reason:
+
+52
+00:02:34,138 --> 00:02:36,650
+wrong form factor, four GPUs per node,
+
+53
+00:02:36,650 --> 00:02:40,338
+refurbished, euros, expired, or an ambiguous SKU.
+
+54
+00:02:40,338 --> 00:02:45,100
+To try it, install the requirements and run python -m intake.demo.
+
+55
+00:02:46,075 --> 00:02:47,300
+A few gotchas.
+
+56
+00:02:47,300 --> 00:02:50,225
+Validity is checked against a pinned dataset date.
+
+57
+00:02:50,225 --> 00:02:52,375
+Without it, the code uses today's date,
+
+58
+00:02:52,375 --> 00:02:54,775
+and the samples will expire over time.
+
+59
+00:02:54,775 --> 00:02:57,725
+The eval shows zero wrong values marked ok,
+
+60
+00:02:57,725 --> 00:03:00,425
+but the rules and the data generator were written together,
+
+61
+00:03:00,425 --> 00:03:02,925
+so that says little about real files.
+
+62
+00:03:02,925 --> 00:03:06,213
+The catalog has seven SKUs and ignores CPU,
+
+63
+00:03:06,213 --> 00:03:07,775
+network and storage.
+
+64
+00:03:07,775 --> 00:03:11,350
+Non-dollar prices are always flagged, never converted.
+
+65
+00:03:11,350 --> 00:03:14,175
+And the quote view is replayed on every request.
+
+66
+00:03:15,175 --> 00:03:16,250
+To recap.
+
+67
+00:03:16,250 --> 00:03:18,612
+Raw bytes and hash are stored first.
+
+68
+00:03:18,612 --> 00:03:21,687
+Deterministic parsers decide every value.
+
+69
+00:03:21,687 --> 00:03:24,238
+Anything unclear goes to review with a reason,
+
+70
+00:03:24,238 --> 00:03:25,563
+never a guess.
+
+71
+00:03:25,563 --> 00:03:28,650
+Every change is an event, and state is a replay.
+
+72
+00:03:28,650 --> 00:03:31,175
+And only like-for-like quotes are compared.
+
+73
+00:03:32,175 --> 00:03:33,600
+Thank you for watching.
